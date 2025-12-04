@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Frontend Developer",
+    "company": "ABC Tech",
+    "location": "TP. Hồ Chí Minh",
+    "skills": ["HTML", "CSS", "JavaScript"],
+    "description": "Phát triển giao diện web, tối ưu hiệu suất và trải nghiệm người dùng."
+  },
+  {
+    "title": "Backend Developer",
+    "company": "XYZ Solutions",
+    "location": "Hà Nội",
+    "skills": ["Python", "Django", "SQL"],
+    "description": "Xây dựng API, xử lý logic nghiệp vụ và tương tác với cơ sở dữ liệu."
+  }
+]
