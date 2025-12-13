@@ -1,0 +1,474 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ job.title }} - JobPortal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .job-detail-header {
+        background-color: var(--white);
+        border-bottom: 1px solid var(--border-color);
+        padding: 30px 0;
+        margin-bottom: 40px;
+    }
+
+    .job-detail-top {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 30px;
+        align-items: start;
+    }
+
+    .job-detail-intro {
+        flex: 1;
+    }
+
+    .job-detail-intro h1 {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--text-dark);
+    }
+
+    .job-detail-company {
+        font-size: 16px;
+        color: var(--text-light);
+        margin-bottom: 15px;
+    }
+
+    .job-detail-meta {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: var(--text-dark);
+    }
+
+    .job-detail-sidebar {
+        background-color: var(--primary-color);
+        color: var(--white);
+        padding: 25px;
+        border-radius: var(--radius);
+        width: 300px;
+    }
+
+    .salary-box {
+        margin-bottom: 25px;
+        padding-bottom: 25px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .salary-label {
+        font-size: 12px;
+        opacity: 0.9;
+        margin-bottom: 5px;
+    }
+
+    .salary-amount {
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .btn-apply {
+        width: 100%;
+        padding: 14px;
+        background-color: var(--secondary-color);
+        color: var(--text-dark);
+        border: none;
+        border-radius: var(--radius);
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: var(--transition);
+        margin-bottom: 12px;
+    }
+
+    .btn-apply:hover {
+        transform: scale(1.02);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-save {
+        width: 100%;
+        padding: 12px;
+        background-color: transparent;
+        border: 2px solid var(--secondary-color);
+        color: var(--secondary-color);
+        border-radius: var(--radius);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .btn-save:hover {
+        background-color: var(--secondary-color);
+        color: var(--text-dark);
+    }
+
+    .detail-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 40px;
+    }
+
+    .detail-main {
+        background-color: var(--white);
+        padding: 30px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+    }
+
+    .detail-section {
+        margin-bottom: 35px;
+    }
+
+    .detail-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: var(--text-dark);
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--primary-color);
+    }
+
+    .section-content {
+        color: var(--text-dark);
+        line-height: 1.8;
+    }
+
+    .section-content ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .section-content li {
+        padding-left: 25px;
+        margin-bottom: 12px;
+        position: relative;
+    }
+
+    .section-content li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: var(--primary-color);
+        font-weight: bold;
+    }
+
+    .requirements-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .requirement-item {
+        padding: 12px;
+        background-color: rgba(26, 138, 122, 0.05);
+        border-left: 3px solid var(--primary-color);
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .skills-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .skill-tag {
+        background-color: rgba(26, 138, 122, 0.1);
+        color: var(--primary-color);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .detail-sidebar {
+        position: sticky;
+        top: 100px;
+    }
+
+    .sidebar-card {
+        background-color: var(--white);
+        padding: 20px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        margin-bottom: 20px;
+    }
+
+    .sidebar-card h3 {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: var(--text-dark);
+    }
+
+    .company-info {
+        text-align: center;
+    }
+
+    .company-logo {
+        width: 80px;
+        height: 80px;
+        background-color: var(--primary-color);
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 40px;
+    }
+
+    .company-name {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .company-description {
+        font-size: 13px;
+        color: var(--text-light);
+        line-height: 1.6;
+    }
+
+    .company-link {
+        display: inline-block;
+        color: var(--primary-color);
+        margin-top: 10px;
+        font-weight: 600;
+    }
+
+    .job-posted-info {
+        font-size: 13px;
+        color: var(--text-light);
+    }
+
+    .job-expiration {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 12px;
+        border-radius: var(--radius);
+        font-size: 13px;
+        text-align: center;
+    }
+
+    @media (max-width: 968px) {
+        .detail-content {
+            grid-template-columns: 1fr;
+        }
+
+        .detail-sidebar {
+            position: static;
+        }
+
+        .requirements-list {
+            grid-template-columns: 1fr;
+        }
+
+        .job-detail-top {
+            grid-template-columns: 1fr;
+        }
+
+        .job-detail-sidebar {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Job Header -->
+<div class="job-detail-header">
+    <div class="container">
+        <div class="job-detail-top">
+            <div class="job-detail-intro">
+                <h1>{{ job.title }}</h1>
+                <div class="job-detail-company">{{ job.company.name }}</div>
+                <div class="job-detail-meta">
+                    <div class="meta-item">📍 {{ job.location }}</div>
+                    <div class="meta-item">⏰ {{ job.job_type }}</div>
+                    <div class="meta-item">📅 Posted {{ job.created_at|timesince }} ago</div>
+                </div>
+            </div>
+
+            <div class="job-detail-sidebar">
+                {% if job.salary_min and job.salary_max %}
+                <div class="salary-box">
+                    <div class="salary-label">Expected Salary</div>
+                    <div class="salary-amount">${{ job.salary_min }}k - ${{ job.salary_max }}k</div>
+                    <div class="salary-label" style="font-size: 12px; margin-top: 5px;">Per Year</div>
+                </div>
+                {% endif %}
+
+                {% if user.is_authenticated and not user.company %}
+                <button class="btn-apply" onclick="document.getElementById('apply-modal').style.display='flex';">
+                    💼 Apply Now
+                </button>
+                {% elif user.is_authenticated and user.company %}
+                <button class="btn-apply" disabled style="opacity: 0.6; cursor: not-allowed;">
+                    Employer Account
+                </button>
+                {% else %}
+                <a href="{% url 'accounts:login' %}" class="btn-apply" style="display: block; text-align: center;">
+                    💼 Apply Now
+                </a>
+                {% endif %}
+
+                <button class="btn-save">💾 Save Job</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="detail-content">
+        <div class="detail-main">
+            <!-- Job Description -->
+            <div class="detail-section">
+                <h2 class="section-title">Job Description</h2>
+                <div class="section-content">
+                    {{ job.description|linebreaks }}
+                </div>
+            </div>
+
+            <!-- Responsibilities -->
+            <div class="detail-section">
+                <h2 class="section-title">Responsibilities</h2>
+                <div class="section-content">
+                    <ul>
+                        {% if job.responsibilities %}
+                        <div class="section-content">
+                            <ul>
+                                <li>{{ job.responsibilities|linebreaks }}</li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <div class="section-content">
+                            <ul>
+                                <li>Design and implement solutions</li>
+                                <li>Collaborate with team members</li>
+                                <li>Review and improve code quality</li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Requirements -->
+            <div class="detail-section">
+                <h2 class="section-title">Requirements</h2>
+                <div class="section-content">
+                    {% if job.requirements %}
+                    <div class="section-content">
+                        <ul>
+                            <li>{{ job.requirements|linebreaks }}</li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <div class="requirements-list">
+                        <div class="requirement-item">3+ years of experience</div>
+                        <div class="requirement-item">Strong problem-solving skills</div>
+                        <div class="requirement-item">Experience with modern frameworks</div>
+                        <div class="requirement-item">Good communication skills</div>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="detail-section">
+                <h2 class="section-title">Required Skills</h2>
+                {% if job.required_skills.all %}
+                <div class="skills-list">
+                    {% for skill in job.required_skills.all %}
+                        <span class="skill-tag">{{ skill.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            </div>
+
+        <!-- Sidebar -->
+        <div class="detail-sidebar">
+            <!-- Company Info -->
+            <div class="sidebar-card company-info">
+                <h3>About Company</h3>
+                <div class="company-logo">
+                    {% if job.company.logo %}
+                        <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius);">
+                    {% else %}
+                        {{ job.company.name|first }}
+                    {% endif %}
+                </div>
+                <div class="company-name">{{ job.company.name }}</div>
+                <div class="company-description">
+                    {{ job.company.description|default:"Leading company in the industry" }}
+                </div>
+                <a href="#" class="company-link">View Company Profile →</a>
+            </div>
+
+            <!-- Job Info Card -->
+            <div class="sidebar-card">
+                <h3>Job Details</h3>
+                <div class="job-posted-info">
+                    <p><strong>Job Type:</strong> {{ job.job_type }}</p>
+                    <p><strong>Location:</strong> {{ job.location }}</p>
+                    <p><strong>Experience:</strong> {{ job.experience_level|default:"Not specified" }}</p>
+                    <p><strong>Posted:</strong> {{ job.created_at|date:"M d, Y" }}</p>
+                    <p><strong>Applicants:</strong> {{ job.applicants.count }}</p>
+                </div>
+            </div>
+
+            {% if job.expiration_date %}
+            <div class="job-expiration">
+                ⏰ This job will expire on {{ job.expiration_date|date:"M d, Y" }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Apply Modal -->
+<div id="apply-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 999; justify-content: center; align-items: center;">
+    <div style="background-color: var(--white); padding: 40px; border-radius: var(--radius); max-width: 500px; width: 90%;">
+        <h2 style="margin-bottom: 20px; color: var(--text-dark);">Apply for {{ job.title }}</h2>
+        
+        <form method="POST" action="{% url 'jobs:detail' job.id %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label>Cover Letter</label>
+                <textarea name="cover_letter" required placeholder="Tell us why you're a great fit for this position..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">Submit Application</button>
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('apply-modal').style.display='none'" style="flex: 1;">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('apply-modal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}JobPortal - Sàn Tuyển Dụng{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="{% url 'home' %}" class="logo">
+                    <span class="logo-icon">💼</span>
+                    <span class="logo-text">JobPortal</span>
+                </a>
+            </div>
+            
+            <ul class="navbar-menu">
+                <li><a href="{% url 'home' %}" class="nav-link">Home</a></li>
+                <li><a href="{% url 'jobs:list' %}" class="nav-link">Browse Jobs</a></li>
+                
+                {% if user.is_authenticated %}
+                    {% if user.profile.is_employer %}
+                        <!-- Employer Menu -->
+                        <li><a href="{% url 'jobs:list' %}" class="nav-link">Browse Jobs</a></li>
+                        <li><a href="{% url 'jobs:create' %}" class="nav-link" style="background-color: var(--primary-color); color: var(--white); padding: 8px 16px; border-radius: var(--radius);">➕ Post Job</a></li>
+                    {% else %}
+                        <!-- Candidate Menu -->
+                        <li><a href="{% url 'jobs:list' %}" class="nav-link">Browse Jobs</a></li>
+                    {% endif %}
+                    
+                    <li class="dropdown">
+                        <button class="nav-link dropdown-toggle">
+                            👤 {{ user.first_name|default:user.username }}
+                        </button>
+                        <div class="dropdown-menu">
+                            {% if user.profile.is_employer %}
+                                <a href="{% url 'dashboard:index' %}" class="dropdown-item">📊 Dashboard</a>
+                                <a href="{% url 'jobs:create' %}" class="dropdown-item">➕ Post New Job</a>
+                            {% else %}
+                                <a href="{% url 'accounts:my_applications' %}" class="dropdown-item">📋 My Applications</a>
+                                <a href="{% url 'accounts:saved_jobs' %}" class="dropdown-item">💾 Saved Jobs</a>
+                            {% endif %}
+                            <a href="{% url 'accounts:profile' %}" class="dropdown-item">⚙️ Profile Settings</a>
+                            <hr class="dropdown-divider">
+                            <a href="{% url 'accounts:logout' %}" class="dropdown-item logout">🚪 Logout</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <li><a href="{% url 'accounts:login' %}" class="nav-link">Login</a></li>
+                    <li><a href="{% url 'accounts:register' %}" class="btn-primary">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Messages Alert -->
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                    <button class="alert-close">&times;</button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>JobPortal</h4>
+                    <p>Kết nối những tài năng tốt nhất với các công ty hàng đầu</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'jobs:list' %}">Jobs</a></li>
+                        <li><a href="#">Companies</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Email: info@jobportal.com</p>
+                    <p>Phone: (+84) 123 456 789</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 JobPortal. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

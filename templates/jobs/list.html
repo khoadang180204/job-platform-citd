@@ -1,0 +1,477 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Browse Jobs - JobPortal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .jobs-page-header {
+        background: linear-gradient(135deg, #1a8a7a 0%, #0f5f54 100%);
+        color: var(--white);
+        padding: 40px 20px;
+        margin-bottom: 40px;
+    }
+
+    .jobs-page-header h1 {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+
+    .jobs-page-header p {
+        font-size: 16px;
+        opacity: 0.9;
+    }
+
+    .jobs-container {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .sidebar {
+        background-color: var(--white);
+        padding: 20px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+
+    .sidebar-section {
+        margin-bottom: 25px;
+    }
+
+    .sidebar-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .sidebar-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: var(--text-dark);
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--primary-color);
+    }
+
+    .filter-group {
+        margin-bottom: 12px;
+    }
+
+    .filter-group label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: var(--text-dark);
+        margin-bottom: 0;
+        cursor: pointer;
+    }
+
+    .filter-group input[type="checkbox"],
+    .filter-group input[type="radio"] {
+        width: auto;
+        cursor: pointer;
+    }
+
+    .price-range {
+        margin-top: 10px;
+    }
+
+    .price-range input {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+    }
+
+    .filter-reset {
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-dark);
+        padding: 8px 12px;
+        width: 100%;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    .jobs-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .job-item {
+        background-color: var(--white);
+        border: 1px solid var(--border-color);
+        border-left: 4px solid var(--primary-color);
+        padding: 20px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        cursor: pointer;
+    }
+
+    .job-item:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateX(5px);
+    }
+
+    .job-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 12px;
+    }
+
+    .job-title-company {
+        flex: 1;
+    }
+
+    .job-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: var(--text-dark);
+        margin-bottom: 5px;
+    }
+
+    .job-company {
+        font-size: 14px;
+        color: var(--text-light);
+    }
+
+    .job-salary {
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary-color);
+        white-space: nowrap;
+    }
+
+    .job-meta {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+
+    .job-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--text-light);
+    }
+
+    .job-description {
+        color: var(--text-dark);
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+
+    .job-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+
+    .tag {
+        background-color: rgba(26, 138, 122, 0.1);
+        color: var(--primary-color);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .job-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .job-posted {
+        font-size: 12px;
+        color: var(--text-light);
+    }
+
+    .job-action {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-view {
+        background-color: var(--primary-color);
+        color: var(--white);
+        padding: 8px 16px;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: var(--transition);
+    }
+
+    .btn-view:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .btn-save {
+        background-color: transparent;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+        padding: 8px 16px;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: var(--transition);
+    }
+
+    .btn-save:hover {
+        background-color: var(--primary-color);
+        color: var(--white);
+    }
+
+    .no-jobs {
+        text-align: center;
+        padding: 40px 20px;
+        background-color: var(--white);
+        border-radius: var(--radius);
+    }
+
+    .no-jobs p {
+        color: var(--text-light);
+        margin-bottom: 20px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 30px;
+    }
+
+    .pagination a, .pagination span {
+        padding: 8px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        text-decoration: none;
+        color: var(--text-dark);
+        transition: var(--transition);
+    }
+
+    .pagination a:hover {
+        background-color: var(--primary-color);
+        color: var(--white);
+        border-color: var(--primary-color);
+    }
+
+    .pagination .active {
+        background-color: var(--primary-color);
+        color: var(--white);
+        border-color: var(--primary-color);
+    }
+
+    @media (max-width: 768px) {
+        .jobs-container {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            position: static;
+        }
+
+        .job-header {
+            flex-direction: column;
+        }
+
+        .job-salary {
+            white-space: normal;
+            margin-top: 10px;
+        }
+
+        .job-footer {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="jobs-page-header">
+    <div class="container">
+        <h1>Browse Jobs</h1>
+        <p>Found {{ jobs_count }} job positions available</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="jobs-container">
+        <!-- Sidebar Filters -->
+        <aside class="sidebar">
+            <form method="GET" class="filter-form">
+                <!-- Job Type Filter -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Job Type</div>
+                    {% for type_choice in job_types %}
+                    <div class="filter-group">
+                        <label>
+                            <input type="checkbox" name="job_type" value="{{ type_choice }}"
+                                {% if type_choice in selected_job_types %}checked{% endif %}>
+                            {{ type_choice }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Salary Range Filter -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Salary Range</div>
+                    <div class="filter-group">
+                        <label>
+                            <input type="radio" name="salary" value="">
+                            All Salaries
+                        </label>
+                    </div>
+                    <div class="filter-group">
+                        <label>
+                            <input type="radio" name="salary" value="0-50">
+                            $0 - $50k
+                        </label>
+                    </div>
+                    <div class="filter-group">
+                        <label>
+                            <input type="radio" name="salary" value="50-100">
+                            $50k - $100k
+                        </label>
+                    </div>
+                    <div class="filter-group">
+                        <label>
+                            <input type="radio" name="salary" value="100-150">
+                            $100k - $150k
+                        </label>
+                    </div>
+                    <div class="filter-group">
+                        <label>
+                            <input type="radio" name="salary" value="150+">
+                            $150k+
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Location Filter -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Location</div>
+                    <div class="filter-group">
+                        <input type="text" name="location" placeholder="Search location" 
+                            value="{{ search_location }}" style="padding: 8px; border: 1px solid var(--border-color);">
+                    </div>
+                </div>
+
+                <!-- Search Filter -->
+                <div class="sidebar-section">
+                    <div class="filter-group">
+                        <input type="text" name="q" placeholder="Search keywords" 
+                            value="{{ search_query }}" style="padding: 8px; border: 1px solid var(--border-color);">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;">
+                    Apply Filters
+                </button>
+                <a href="{% url 'jobs:list' %}" class="filter-reset">Clear All</a>
+            </form>
+        </aside>
+
+        <!-- Jobs List -->
+        <div class="jobs-list-wrapper">
+            {% if jobs %}
+                <div class="jobs-list">
+                    {% for job in jobs %}
+                    <div class="job-item">
+                        <div class="job-header">
+                            <div class="job-title-company">
+                                <div class="job-title">{{ job.title }}</div>
+                                <div class="job-company">{{ job.company.name }}</div>
+                            </div>
+                            <div class="job-salary">
+                                {% if job.salary_min and job.salary_max %}
+                                    ${{ job.salary_min }}k - ${{ job.salary_max }}k
+                                {% else %}
+                                    Negotiable
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="job-meta">
+                            <div class="job-meta-item">📍 {{ job.location }}</div>
+                            <div class="job-meta-item">⏰ {{ job.job_type }}</div>
+                            <div class="job-meta-item">📅 Posted {{ job.created_at|timesince }} ago</div>
+                        </div>
+
+                        <div class="job-description">
+                            {{ job.description|truncatewords:30 }}
+                        </div>
+
+                        {% if job.required_skills.all %}
+                        <div class="job-tags">
+                            {% for skill in job.required_skills.all|slice:":5" %}
+                                <span class="tag">{{ skill.name }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="job-footer">
+                            <div class="job-posted">
+                                {{ job.applicants.count }} applicant{{ job.applicants.count|pluralize }}
+                            </div>
+                            <div class="job-action">
+                                <a href="{% url 'jobs:detail' job.id %}" class="btn-view">View Details</a>
+                                <button class="btn-save" title="Save job">💾 Save</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">First</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">← Previous</a>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <span class="active">{{ num }}</span>
+                        {% else %}
+                            <a href="?page={{ num }}">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">Next →</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="no-jobs">
+                    <p style="font-size: 16px;">😔 No jobs found matching your criteria.</p>
+                    <a href="{% url 'jobs:list' %}" class="btn btn-primary">Clear Filters</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

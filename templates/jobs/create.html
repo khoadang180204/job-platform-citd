@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Post a Job - JobPortal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .create-job-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .create-job-header {
+        background: linear-gradient(135deg, #1a8a7a 0%, #0f5f54 100%);
+        color: var(--white);
+        padding: 30px 0;
+        margin-bottom: 40px;
+        text-align: center;
+    }
+
+    .create-job-header h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .form-card {
+        background-color: var(--white);
+        padding: 40px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 15px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        font-size: 14px;
+        font-family: inherit;
+        transition: var(--transition);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(26, 138, 122, 0.1);
+    }
+
+    .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-row .form-group {
+        margin-bottom: 0;
+    }
+
+    .help-text {
+        font-size: 13px;
+        color: var(--text-light);
+        margin-top: 5px;
+    }
+
+    .form-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        justify-content: flex-end;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: var(--radius);
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .btn-submit {
+        background-color: var(--primary-color);
+        color: var(--white);
+    }
+
+    .btn-submit:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .btn-cancel {
+        background-color: var(--text-light);
+        color: var(--white);
+    }
+
+    .btn-cancel:hover {
+        background-color: #5a6268;
+    }
+
+    @media (max-width: 600px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .form-buttons {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="create-job-header">
+    <div class="container">
+        <h1>Post a New Job</h1>
+        <p>Fill in the details to create a job posting</p>
+    </div>
+</div>
+
+<div class="create-job-container">
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" style="margin-bottom: 20px;">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="form-card">
+        <form method="POST" action="{% url 'jobs:create' %}">
+            {% csrf_token %}
+
+            <!-- Job Title -->
+            <div class="form-group">
+                <label for="title">Job Title *</label>
+                <input type="text" id="title" name="title" placeholder="e.g., Senior Python Developer" required>
+                <div class="help-text">Be specific about the role</div>
+            </div>
+
+            <!-- Location & Job Type -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="location">Location *</label>
+                    <input type="text" id="location" name="location" placeholder="e.g., Ho Chi Minh City" required>
+                </div>
+                <div class="form-group">
+                    <label for="job_type">Job Type *</label>
+                    <select id="job_type" name="job_type" required>
+                        <option value="">Select job type</option>
+                        {% for type_choice in job_types %}
+                            <option value="{{ type_choice.0 }}">{{ type_choice.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Salary Range -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="salary_min">Salary Min (k/year)</label>
+                    <input type="number" id="salary_min" name="salary_min" placeholder="e.g., 50" step="10">
+                </div>
+                <div class="form-group">
+                    <label for="salary_max">Salary Max (k/year)</label>
+                    <input type="number" id="salary_max" name="salary_max" placeholder="e.g., 100" step="10">
+                </div>
+            </div>
+
+            <!-- Experience Level -->
+            <div class="form-group">
+                <label for="experience_level">Experience Level Required</label>
+                <input type="text" id="experience_level" name="experience_level" placeholder="e.g., 3-5 years">
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="description">Job Description *</label>
+                <textarea id="description" name="description" placeholder="Describe the job, team, and what you're looking for..." required></textarea>
+                <div class="help-text">Be detailed and engaging</div>
+            </div>
+
+            <!-- Responsibilities -->
+            <div class="form-group">
+                <label for="responsibilities">Key Responsibilities</label>
+                <textarea id="responsibilities" name="responsibilities" placeholder="List main responsibilities, one per line..."></textarea>
+                <div class="help-text">Separate each responsibility on a new line</div>
+            </div>
+
+            <!-- Requirements -->
+            <div class="form-group">
+                <label for="requirements">Requirements & Qualifications</label>
+                <textarea id="requirements" name="requirements" placeholder="List required qualifications, one per line..."></textarea>
+                <div class="help-text">Separate each requirement on a new line</div>
+            </div>
+
+            <!-- Required Skills -->
+            <div class="form-group">
+                <label for="required_skills">Required Skills</label>
+                <input type="text" id="required_skills" name="required_skills" placeholder="e.g., Python, Django, PostgreSQL (comma separated)">
+                <div class="help-text">Separate skills with commas</div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="form-buttons">
+                <a href="{% url 'dashboard:index' %}" class="btn btn-cancel">Cancel</a>
+                <button type="submit" class="btn btn-submit">Post Job</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
