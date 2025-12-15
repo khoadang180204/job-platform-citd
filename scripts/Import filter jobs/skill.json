@@ -1,0 +1,136 @@
+{
+  "IT": [
+    "Python",
+    "Java",
+    "JavaScript",
+    "PHP",
+    "C#",
+    "HTML/CSS",
+    "ReactJS",
+    "NodeJS",
+    "SQL",
+    "Docker"
+  ],
+  "Nhân viên kinh doanh": [
+    "Kỹ năng đàm phán",
+    "Kỹ năng bán hàng",
+    "Chăm sóc khách hàng",
+    "Tìm kiếm khách hàng",
+    "Quản lý pipeline",
+    "Kỹ năng thuyết trình",
+    "Chốt sale",
+    "CRM"
+  ],
+  "Kế toán": [
+    "Hạch toán kế toán",
+    "Lập báo cáo tài chính",
+    "Quyết toán thuế",
+    "Kê khai thuế",
+    "Excel kế toán",
+    "Phần mềm MISA",
+    "Phần mềm FAST",
+    "Kiểm soát chi phí"
+  ],
+  "Marketing": [
+    "SEO",
+    "Google Ads",
+    "Facebook Ads",
+    "Content Writing",
+    "Email Marketing",
+    "Marketing Automation",
+    "Phân tích dữ liệu",
+    "Branding",
+    "Social Media"
+  ],
+  "Hành chính nhân sự": [
+    "Tuyển dụng",
+    "C&B",
+    "Luật lao động",
+    "Chấm công tính lương",
+    "Đào tạo nội bộ",
+    "Quản lý hồ sơ nhân sự",
+    "Xây dựng quy trình"
+  ],
+  "Chăm sóc khách hàng": [
+    "Giao tiếp khách hàng",
+    "Xử lý khiếu nại",
+    "Kỹ năng lắng nghe",
+    "CSKH đa kênh",
+    "CRM",
+    "Kỹ năng thuyết phục",
+    "Quản lý ticket"
+  ],
+  "Ngân hàng": [
+    "Thẩm định tín dụng",
+    "Phân tích tài chính",
+    "Quan hệ khách hàng",
+    "Quản lý rủi ro",
+    "Hồ sơ vay vốn",
+    "Bán chéo sản phẩm",
+    "Tư vấn tài chính"
+  ],
+  "Lao động phổ thông": [
+    "Lao động tay chân",
+    "Đóng gói sản phẩm",
+    "Bốc xếp hàng hóa",
+    "Vận hành máy móc",
+    "Làm việc theo ca",
+    "Tuân thủ an toàn lao động"
+  ],
+  "Senior": [
+    "Leadership",
+    "Mentoring",
+    "Quản lý đội nhóm",
+    "Ra quyết định",
+    "Chiến lược",
+    "Quản lý dự án",
+    "Giải quyết vấn đề"
+  ],
+  "Kỹ sư xây dựng": [
+    "Đọc bản vẽ kỹ thuật",
+    "Giám sát công trình",
+    "Dự toán xây dựng",
+    "AutoCAD",
+    "SAP2000",
+    "ETABS",
+    "Quản lý tiến độ",
+    "An toàn lao động"
+  ],
+  "Thiết kế đồ họa": [
+    "Photoshop",
+    "Illustrator",
+    "InDesign",
+    "Figma",
+    "UI Design",
+    "UX Design",
+    "Brand Identity",
+    "Motion Design"
+  ],
+  "Bất động sản": [
+    "Tư vấn khách hàng",
+    "Đàm phán hợp đồng",
+    "Pháp lý bất động sản",
+    "Kỹ năng bán hàng",
+    "Chăm sóc khách hàng",
+    "Marketing dự án",
+    "Khai thác khách hàng"
+  ],
+  "Giáo dục": [
+    "Giảng dạy",
+    "Soạn giáo án",
+    "Quản lý lớp học",
+    "Kỹ năng sư phạm",
+    "Đánh giá học sinh",
+    "Giao tiếp phụ huynh",
+    "E-learning"
+  ],
+  "Telesales": [
+    "Gọi điện tư vấn",
+    "Kịch bản bán hàng",
+    "Chốt sale qua điện thoại",
+    "Xử lý từ chối",
+    "CRM",
+    "Giọng nói truyền cảm",
+    "Chăm sóc khách hàng"
+  ]
+}

@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
 from .models import UserProfile
-from jobs.models import Company
+from jobs.models import Company, SavedJob
 
 def login_view(request):
     """User login view"""
@@ -40,7 +40,7 @@ def register_view(request):
         first_name = request.POST.get('first_name')
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
-        role = request.POST.get('role', '').lower()  # Get and lowercase role
+        role = request.POST.get('role', '').lower()
         
         # Validate role
         if role not in ['candidate', 'employer']:
@@ -50,36 +50,17 @@ def register_view(request):
         # Validate passwords match
         if password1 != password2:
             messages.error(request, 'Passwords do not match!')
-            return render(request, 'accounts/register.html', {
-                'form_data': {
-                    'username': username,
-                    'email': email,
-                    'first_name': first_name,
-                    'role': role
-                }
-            })
+            return render(request, 'accounts/register.html')
         
         # Check username exists
         if User.objects.filter(username=username).exists():
             messages.error(request, 'Username already exists!')
-            return render(request, 'accounts/register.html', {
-                'form_data': {
-                    'email': email,
-                    'first_name': first_name,
-                    'role': role
-                }
-            })
+            return render(request, 'accounts/register.html')
         
         # Check email exists
         if User.objects.filter(email=email).exists():
             messages.error(request, 'Email already registered!')
-            return render(request, 'accounts/register.html', {
-                'form_data': {
-                    'username': username,
-                    'first_name': first_name,
-                    'role': role
-                }
-            })
+            return render(request, 'accounts/register.html')
         
         # Create user with transaction
         try:
@@ -156,9 +137,14 @@ def saved_jobs_view(request):
         messages.error(request, 'Only candidates can save jobs!')
         return redirect('home')
     
-    # TODO: Implement saved jobs (thêm SavedJob model nếu cần)
-    # Hiện tại redirect về jobs list
-    return redirect('jobs:list')
+    saved_jobs = SavedJob.objects.filter(user=request.user).select_related('job').order_by('-created_at')
+    
+    context = {
+        'saved_jobs': saved_jobs,
+        'saved_jobs_count': saved_jobs.count()
+    }
+    
+    return render(request, 'accounts/saved_jobs.html', context)
 
 @login_required(login_url='accounts:login')
 def my_applications_view(request):

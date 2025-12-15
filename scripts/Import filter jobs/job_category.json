@@ -1,0 +1,129 @@
+{
+  "Nhân viên kinh doanh": [
+    "Kinh doanh B2B",
+    "Kinh doanh B2C",
+    "Phát triển thị trường",
+    "Quản lý khách hàng",
+    "Sales Admin",
+    "Sales Executive",
+    "Sales Supervisor",
+    "Sales Manager"
+  ],
+  "Kế toán": [
+    "Kế toán tổng hợp",
+    "Kế toán thuế",
+    "Kế toán nội bộ",
+    "Kế toán công nợ",
+    "Kế toán kho",
+    "Kế toán trưởng",
+    "Kiểm toán"
+  ],
+  "Marketing": [
+    "Digital Marketing",
+    "Content Marketing",
+    "SEO",
+    "SEM / Google Ads",
+    "Social Media Marketing",
+    "Brand Marketing",
+    "PR - Truyền thông",
+    "Trade Marketing"
+  ],
+  "Hành chính nhân sự": [
+    "Nhân sự tổng hợp",
+    "C&B",
+    "Tuyển dụng",
+    "Hành chính văn phòng",
+    "Đào tạo nội bộ",
+    "HRBP",
+    "Trưởng phòng nhân sự"
+  ],
+  "Chăm sóc khách hàng": [
+    "Customer Service",
+    "Call Center",
+    "Hỗ trợ khách hàng online",
+    "Chăm sóc khách hàng sau bán",
+    "CSKH qua điện thoại",
+    "CSKH qua email/chat"
+  ],
+  "Ngân hàng": [
+    "Giao dịch viên",
+    "Chuyên viên tín dụng",
+    "Quan hệ khách hàng",
+    "Thẩm định tín dụng",
+    "Ngân hàng bán lẻ",
+    "Ngân hàng doanh nghiệp",
+    "Quản lý rủi ro"
+  ],
+  "IT": [
+    "Lập trình Web",
+    "Lập trình Mobile",
+    "Backend Developer",
+    "Frontend Developer",
+    "Fullstack Developer",
+    "QA / Tester",
+    "DevOps",
+    "System Admin",
+    "Data Analyst",
+    "AI / Machine Learning"
+  ],
+  "Lao động phổ thông": [
+    "Công nhân sản xuất",
+    "Nhân viên kho",
+    "Phụ kho",
+    "Bốc xếp",
+    "Đóng gói",
+    "Tạp vụ",
+    "Bảo vệ"
+  ],
+  "Senior": [
+    "Senior Developer",
+    "Senior Marketing",
+    "Senior Accountant",
+    "Senior Sales",
+    "Senior HR",
+    "Senior Designer",
+    "Senior Manager"
+  ],
+  "Kỹ sư xây dựng": [
+    "Kỹ sư hiện trường",
+    "Kỹ sư kết cấu",
+    "Kỹ sư giám sát",
+    "Kỹ sư dự toán",
+    "Kỹ sư hạ tầng",
+    "Chỉ huy trưởng công trình"
+  ],
+  "Thiết kế đồ họa": [
+    "Graphic Designer",
+    "UI/UX Designer",
+    "Thiết kế banner",
+    "Thiết kế nhận diện thương hiệu",
+    "Thiết kế bao bì",
+    "Motion Graphic",
+    "Illustrator"
+  ],
+  "Bất động sản": [
+    "Nhân viên môi giới",
+    "Tư vấn bất động sản",
+    "Quản lý sàn",
+    "Phát triển dự án",
+    "Kinh doanh dự án",
+    "Trợ lý dự án"
+  ],
+  "Giáo dục": [
+    "Giáo viên mầm non",
+    "Giáo viên tiểu học",
+    "Giáo viên trung học",
+    "Giảng viên",
+    "Trợ giảng",
+    "Gia sư",
+    "Quản lý giáo dục"
+  ],
+  "Telesales": [
+    "Nhân viên telesales",
+    "Telesales bảo hiểm",
+    "Telesales tài chính",
+    "Telesales bất động sản",
+    "Trưởng nhóm telesales",
+    "Call center sales"
+  ]
+}

@@ -76,16 +76,6 @@
         cursor: pointer;
     }
 
-    .price-range {
-        margin-top: 10px;
-    }
-
-    .price-range input {
-        width: 100%;
-        height: 6px;
-        border-radius: 3px;
-    }
-
     .filter-reset {
         background-color: transparent;
         border: 1px solid var(--border-color);
@@ -94,6 +84,18 @@
         width: 100%;
         border-radius: var(--radius);
         cursor: pointer;
+        font-size: 13px;
+    }
+
+    .search-box {
+        margin-bottom: 20px;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
         font-size: 13px;
     }
 
@@ -111,7 +113,6 @@
         border-radius: var(--radius);
         box-shadow: var(--shadow);
         transition: var(--transition);
-        cursor: pointer;
     }
 
     .job-item:hover {
@@ -215,6 +216,8 @@
         font-size: 13px;
         font-weight: 600;
         transition: var(--transition);
+        text-decoration: none;
+        display: inline-block;
     }
 
     .btn-view:hover {
@@ -225,7 +228,7 @@
         background-color: transparent;
         border: 1px solid var(--primary-color);
         color: var(--primary-color);
-        padding: 8px 16px;
+        padding: 8px 12px;
         border-radius: var(--radius);
         cursor: pointer;
         font-size: 13px;
@@ -234,6 +237,11 @@
     }
 
     .btn-save:hover {
+        background-color: var(--primary-color);
+        color: var(--white);
+    }
+
+    .btn-save.saved {
         background-color: var(--primary-color);
         color: var(--white);
     }
@@ -301,6 +309,14 @@
             align-items: flex-start;
             gap: 10px;
         }
+
+        .job-action {
+            width: 100%;
+        }
+
+        .btn-view, .btn-save {
+            flex: 1;
+        }
     }
 </style>
 {% endblock %}
@@ -319,70 +335,35 @@
         <!-- Sidebar Filters -->
         <aside class="sidebar">
             <form method="GET" class="filter-form">
+                <!-- Search Box -->
+                <div class="search-box sidebar-section">
+                    <input type="text" name="q" placeholder="Search keywords..." value="{{ search_query }}">
+                </div>
+
+                <!-- City Filter -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">City</div>
+                    <select name="city" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 13px;">
+                        <option value="">-- All Cities --</option>
+                        {% for city in cities %}
+                            <option value="{{ city.id }}" {% if city.id|stringformat:"s" == city_id %}selected{% endif %}>
+                                {{ city.city }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
                 <!-- Job Type Filter -->
                 <div class="sidebar-section">
                     <div class="sidebar-title">Job Type</div>
                     {% for type_choice in job_types %}
                     <div class="filter-group">
                         <label>
-                            <input type="checkbox" name="job_type" value="{{ type_choice }}"
-                                {% if type_choice in selected_job_types %}checked{% endif %}>
+                            <input type="checkbox" name="job_type" value="{{ type_choice }}">
                             {{ type_choice }}
                         </label>
                     </div>
                     {% endfor %}
-                </div>
-
-                <!-- Salary Range Filter -->
-                <div class="sidebar-section">
-                    <div class="sidebar-title">Salary Range</div>
-                    <div class="filter-group">
-                        <label>
-                            <input type="radio" name="salary" value="">
-                            All Salaries
-                        </label>
-                    </div>
-                    <div class="filter-group">
-                        <label>
-                            <input type="radio" name="salary" value="0-50">
-                            $0 - $50k
-                        </label>
-                    </div>
-                    <div class="filter-group">
-                        <label>
-                            <input type="radio" name="salary" value="50-100">
-                            $50k - $100k
-                        </label>
-                    </div>
-                    <div class="filter-group">
-                        <label>
-                            <input type="radio" name="salary" value="100-150">
-                            $100k - $150k
-                        </label>
-                    </div>
-                    <div class="filter-group">
-                        <label>
-                            <input type="radio" name="salary" value="150+">
-                            $150k+
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Location Filter -->
-                <div class="sidebar-section">
-                    <div class="sidebar-title">Location</div>
-                    <div class="filter-group">
-                        <input type="text" name="location" placeholder="Search location" 
-                            value="{{ search_location }}" style="padding: 8px; border: 1px solid var(--border-color);">
-                    </div>
-                </div>
-
-                <!-- Search Filter -->
-                <div class="sidebar-section">
-                    <div class="filter-group">
-                        <input type="text" name="q" placeholder="Search keywords" 
-                            value="{{ search_query }}" style="padding: 8px; border: 1px solid var(--border-color);">
-                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;">
@@ -413,7 +394,7 @@
                         </div>
 
                         <div class="job-meta">
-                            <div class="job-meta-item">📍 {{ job.location }}</div>
+                            <div class="job-meta-item">📍 {{ job.city.city }}</div>
                             <div class="job-meta-item">⏰ {{ job.job_type }}</div>
                             <div class="job-meta-item">📅 Posted {{ job.created_at|timesince }} ago</div>
                         </div>
@@ -436,35 +417,18 @@
                             </div>
                             <div class="job-action">
                                 <a href="{% url 'jobs:detail' job.id %}" class="btn-view">View Details</a>
-                                <button class="btn-save" title="Save job">💾 Save</button>
+                                {% if user.is_authenticated %}
+                                    <a href="{% url 'jobs:save' job.id %}" class="btn-save {% if job.id in saved_job_ids %}saved{% endif %}">
+                                        {% if job.id in saved_job_ids %}💾 Saved{% else %}💾 Save{% endif %}
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'accounts:login' %}" class="btn-save">💾 Save</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
-
-                <!-- Pagination -->
-                {% if is_paginated %}
-                <div class="pagination">
-                    {% if page_obj.has_previous %}
-                        <a href="?page=1">First</a>
-                        <a href="?page={{ page_obj.previous_page_number }}">← Previous</a>
-                    {% endif %}
-
-                    {% for num in page_obj.paginator.page_range %}
-                        {% if page_obj.number == num %}
-                            <span class="active">{{ num }}</span>
-                        {% else %}
-                            <a href="?page={{ num }}">{{ num }}</a>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}">Next →</a>
-                        <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-                    {% endif %}
-                </div>
-                {% endif %}
             {% else %}
                 <div class="no-jobs">
                     <p style="font-size: 16px;">😔 No jobs found matching your criteria.</p>
