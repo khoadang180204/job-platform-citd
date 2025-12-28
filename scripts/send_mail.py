@@ -5,7 +5,7 @@ SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
 
 EMAIL = "khoadang180204@gmail.com"
-APP_PASSWORD = "apoz mgxt febk yulq"  # 16 ký tự
+APP_PASSWORD = ""  # 16 ký tự
 
 TO_EMAIL = "khoadang180204@gmail.com"
 
