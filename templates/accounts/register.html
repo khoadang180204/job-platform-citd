@@ -1,245 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Register - JobPortal{% endblock %}
+{% block title %}Đăng ký - JobNow{% endblock %}
 
 {% block extra_css %}
-<style>
-    .auth-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: auto;
-        padding: 40px 20px;
-    }
-
-    .auth-card {
-        width: 100%;
-        max-width: 500px;
-        background-color: var(--white);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow-lg);
-        padding: 40px;
-    }
-
-    .auth-title {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    .auth-title h2 {
-        font-size: 28px;
-        font-weight: bold;
-        color: var(--text-dark);
-        margin-bottom: 8px;
-    }
-
-    .auth-title p {
-        color: var(--text-light);
-        font-size: 14px;
-    }
-
-    .role-selection {
-        margin-bottom: 30px;
-    }
-
-    .role-selection-title {
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 15px;
-        font-size: 15px;
-    }
-
-    .role-options {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        margin-bottom: 20px;
-    }
-
-    .role-option {
-        position: relative;
-    }
-
-    .role-option input[type="radio"] {
-        display: none;
-    }
-
-    .role-option label {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        border: 2px solid var(--border-color);
-        border-radius: var(--radius);
-        cursor: pointer;
-        transition: var(--transition);
-        background-color: var(--white);
-        text-align: center;
-        margin-bottom: 0;
-    }
-
-    .role-option input[type="radio"]:checked + label {
-        border-color: var(--primary-color);
-        background-color: rgba(26, 138, 122, 0.05);
-        box-shadow: 0 0 0 3px rgba(26, 138, 122, 0.1);
-    }
-
-    .role-icon {
-        font-size: 32px;
-        margin-bottom: 8px;
-    }
-
-    .role-name {
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 5px;
-        font-size: 14px;
-    }
-
-    .role-description {
-        font-size: 12px;
-        color: var(--text-light);
-        line-height: 1.4;
-    }
-
-    .form-group {
-        margin-bottom: 18px;
-    }
-
-    .form-group:last-child {
-        margin-bottom: 0;
-    }
-
-    .form-group label {
-        font-size: 14px;
-        font-weight: 600;
-        margin-bottom: 8px;
-        display: block;
-    }
-
-    .form-group input,
-    .form-group select {
-        width: 100%;
-        padding: 11px 15px;
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius);
-        font-size: 14px;
-        font-family: inherit;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(26, 138, 122, 0.1);
-    }
-
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-    }
-
-    .form-row .form-group {
-        margin-bottom: 0;
-    }
-
-    .help-text {
-        font-size: 13px;
-        color: var(--text-light);
-        margin-top: 5px;
-    }
-
-    .btn-submit {
-        width: 100%;
-        padding: 12px;
-        background-color: var(--primary-color);
-        color: var(--white);
-        border: none;
-        border-radius: var(--radius);
-        font-weight: 600;
-        font-size: 16px;
-        cursor: pointer;
-        transition: var(--transition);
-        margin-top: 15px;
-    }
-
-    .btn-submit:hover {
-        background-color: var(--primary-dark);
-    }
-
-    .auth-footer {
-        text-align: center;
-        margin-top: 20px;
-        padding-top: 20px;
-        border-top: 1px solid var(--border-color);
-    }
-
-    .auth-footer p {
-        color: var(--text-light);
-        font-size: 14px;
-    }
-
-    .auth-footer a {
-        color: var(--primary-color);
-        font-weight: 600;
-    }
-
-    .error-messages {
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
-        color: #721c24;
-        padding: 12px 15px;
-        border-radius: var(--radius);
-        margin-bottom: 20px;
-        font-size: 13px;
-    }
-
-    .error-messages ul {
-        margin: 0;
-        padding-left: 20px;
-    }
-
-    .error-messages li {
-        margin-bottom: 5px;
-    }
-
-    .form-error {
-        color: #dc3545;
-        font-size: 13px;
-        margin-top: 5px;
-    }
-
-    .role-required {
-        color: #dc3545;
-        margin-bottom: 10px;
-        font-size: 13px;
-    }
-
-    @media (max-width: 600px) {
-        .role-options {
-            grid-template-columns: 1fr;
-        }
-
-        .form-row {
-            grid-template-columns: 1fr;
-        }
-
-        .form-row .form-group {
-            margin-bottom: 18px;
-        }
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="auth-container">
-    <div class="auth-card">
+    <div class="auth-card auth-card-wide">
         <div class="auth-title">
-            <h2>Create Account</h2>
-            <p>Join thousands of job seekers and employers today.</p>
+            <h2>Tạo tài khoản</h2>
+            <p>Tham gia cùng hàng nghìn người tìm việc và nhà tuyển dụng ngay hôm nay.</p>
         </div>
 
         {% if messages %}
@@ -250,15 +23,15 @@
             {% endfor %}
         {% endif %}
 
-        <form method="POST" action="{% url 'accounts:register' %}">
+        <form method="POST" action="{% url 'accounts:register' %}" class="auth-form">
             {% csrf_token %}
 
             <!-- Role Selection -->
             <div class="role-selection">
-                <div class="role-selection-title">I am a... *</div>
+                <div class="role-selection-title">Tôi là... *</div>
                 
                 {% if not request.POST.role %}
-                    <div class="role-required">Please select your account type</div>
+                    <div class="role-required">Vui lòng chọn loại tài khoản</div>
                 {% endif %}
 
                 <div class="role-options">
@@ -266,9 +39,9 @@
                         <input type="radio" id="candidate" name="role" value="candidate" required 
                             {% if request.POST.role == 'candidate' %}checked{% endif %}>
                         <label for="candidate">
-                            <div class="role-icon">👤</div>
-                            <div class="role-name">Job Seeker</div>
-                            <div class="role-description">Looking for a job opportunity</div>
+                            <div class="role-icon"><i class="fa-solid fa-user"></i></div>
+                            <div class="role-name">Người tìm việc</div>
+                            <div class="role-description">Đang tìm kiếm cơ hội việc làm</div>
                         </label>
                     </div>
 
@@ -276,9 +49,9 @@
                         <input type="radio" id="employer" name="role" value="employer" required
                             {% if request.POST.role == 'employer' %}checked{% endif %}>
                         <label for="employer">
-                            <div class="role-icon">🏢</div>
-                            <div class="role-name">Employer</div>
-                            <div class="role-description">Hiring for your company</div>
+                            <div class="role-icon"><i class="fa-solid fa-building"></i></div>
+                            <div class="role-name">Nhà tuyển dụng</div>
+                            <div class="role-description">Tuyển dụng cho công ty của bạn</div>
                         </label>
                     </div>
                 </div>
@@ -286,12 +59,12 @@
 
             <!-- Full Name -->
             <div class="form-group">
-                <label for="id_first_name">Full Name *</label>
+                <label for="id_first_name">Họ và tên *</label>
                 <input 
                     type="text" 
                     id="id_first_name" 
                     name="first_name"
-                    placeholder="John Doe"
+                    placeholder="Nguyễn Văn A"
                     required
                     value="{{ request.POST.first_name|default:'' }}"
                 >
@@ -299,7 +72,7 @@
 
             <!-- Email -->
             <div class="form-group">
-                <label for="id_email">Email Address *</label>
+                <label for="id_email">Địa chỉ email *</label>
                 <input 
                     type="email" 
                     id="id_email" 
@@ -312,22 +85,22 @@
 
             <!-- Username -->
             <div class="form-group">
-                <label for="id_username">Username *</label>
+                <label for="id_username">Tên đăng nhập *</label>
                 <input 
                     type="text" 
                     id="id_username" 
                     name="username"
-                    placeholder="john_doe"
+                    placeholder="nguyen_van_a"
                     required
                     value="{{ request.POST.username|default:'' }}"
                 >
-                <div class="help-text">Letters, numbers, and underscores only</div>
+                <div class="help-text">Chỉ bao gồm chữ cái, số và dấu gạch dưới</div>
             </div>
 
             <!-- Password Row -->
             <div class="form-row">
                 <div class="form-group">
-                    <label for="id_password1">Password *</label>
+                    <label for="id_password1">Mật khẩu *</label>
                     <input 
                         type="password" 
                         id="id_password1" 
@@ -338,7 +111,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="id_password2">Confirm Password *</label>
+                    <label for="id_password2">Xác nhận mật khẩu *</label>
                     <input 
                         type="password" 
                         id="id_password2" 
@@ -349,23 +122,23 @@
                 </div>
             </div>
 
-            <div style="font-size: 13px; color: var(--text-light); margin-bottom: 15px;">
-                Password must be at least 8 characters long
+            <div class="help-text" style="margin-bottom: 15px;">
+                Mật khẩu phải có ít nhất 8 ký tự
             </div>
 
             <!-- Terms -->
             <div class="form-group" style="margin-bottom: 20px;">
                 <label style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 0; font-weight: normal;">
                     <input type="checkbox" required style="width: auto; margin-top: 3px;">
-                    <span>I agree to the <a href="#" style="color: var(--primary-color);">Terms of Service</a> and <a href="#" style="color: var(--primary-color);">Privacy Policy</a></span>
+                    <span>Tôi đồng ý với <a href="#" style="color: var(--primary-color);">Điều khoản dịch vụ</a> và <a href="#" style="color: var(--primary-color);">Chính sách bảo mật</a></span>
                 </label>
             </div>
 
-            <button type="submit" class="btn-submit">Create Account</button>
+            <button type="submit" class="btn-submit">Tạo tài khoản</button>
         </form>
 
         <div class="auth-footer">
-            <p>Already have an account? <a href="{% url 'accounts:login' %}">Log In</a></p>
+            <p>Đã có tài khoản? <a href="{% url 'accounts:login' %}">Đăng nhập</a></p>
         </div>
     </div>
 </div>

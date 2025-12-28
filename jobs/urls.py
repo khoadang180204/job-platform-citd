@@ -8,7 +8,9 @@ urlpatterns = [
     path('<int:pk>/', views.job_detail, name='detail'),
     path('<int:pk>/apply/', views.apply_job, name='apply'),
     path('<int:pk>/save/', views.save_job, name='save'),
-    path('create/', views.create_job, name='create'),
-    path('<int:pk>/edit/', views.edit_job, name='edit'),
-    path('<int:pk>/delete/', views.delete_job, name='delete'),
+    # API endpoints for cascading location dropdowns
+    path('api/districts/<str:province_code>/', views.get_districts, name='api_districts'),
+    path('api/wards/<str:district_code>/', views.get_wards, name='api_wards'),
+    # API endpoint for skills by category
+    path('api/skills/<int:category_id>/', views.get_skills_by_category, name='api_skills'),
 ]

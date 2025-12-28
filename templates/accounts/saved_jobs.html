@@ -4,178 +4,15 @@
 {% block title %}Saved Jobs - JobPortal{% endblock %}
 
 {% block extra_css %}
-<style>
-    .saved-jobs-container {
-        max-width: 900px;
-        margin: 40px auto;
-        padding: 0 20px;
-    }
-
-    .saved-jobs-header {
-        background: linear-gradient(135deg, #1a8a7a 0%, #0f5f54 100%);
-        color: var(--white);
-        padding: 30px 0;
-        margin-bottom: 40px;
-        text-align: center;
-    }
-
-    .saved-jobs-header h1 {
-        font-size: 32px;
-        margin-bottom: 5px;
-    }
-
-    .job-card {
-        background-color: var(--white);
-        border-left: 4px solid var(--primary-color);
-        padding: 20px;
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        margin-bottom: 15px;
-        transition: var(--transition);
-    }
-
-    .job-card:hover {
-        box-shadow: var(--shadow-lg);
-        transform: translateX(5px);
-    }
-
-    .job-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: start;
-        margin-bottom: 15px;
-    }
-
-    .job-title {
-        font-size: 18px;
-        font-weight: bold;
-        color: var(--text-dark);
-        margin-bottom: 5px;
-    }
-
-    .job-company {
-        color: var(--text-light);
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
-
-    .job-salary {
-        font-size: 16px;
-        font-weight: bold;
-        color: var(--primary-color);
-    }
-
-    .job-meta {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 12px;
-        flex-wrap: wrap;
-        font-size: 13px;
-        color: var(--text-light);
-    }
-
-    .job-meta-item {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .job-description {
-        color: var(--text-dark);
-        font-size: 14px;
-        line-height: 1.6;
-        margin-bottom: 15px;
-    }
-
-    .job-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-top: 15px;
-        border-top: 1px solid var(--border-color);
-    }
-
-    .saved-date {
-        font-size: 12px;
-        color: var(--text-light);
-    }
-
-    .job-actions {
-        display: flex;
-        gap: 10px;
-    }
-
-    .btn-apply {
-        background-color: var(--primary-color);
-        color: var(--white);
-        padding: 8px 16px;
-        border: none;
-        border-radius: var(--radius);
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 600;
-        text-decoration: none;
-        display: inline-block;
-        transition: var(--transition);
-    }
-
-    .btn-apply:hover {
-        background-color: var(--primary-dark);
-    }
-
-    .btn-remove {
-        background-color: #f8d7da;
-        color: #721c24;
-        padding: 8px 12px;
-        border: 1px solid #f5c6cb;
-        border-radius: var(--radius);
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 600;
-        transition: var(--transition);
-    }
-
-    .btn-remove:hover {
-        background-color: #f5c6cb;
-    }
-
-    .no-saved {
-        text-align: center;
-        padding: 60px 20px;
-        background-color: var(--white);
-        border-radius: var(--radius);
-    }
-
-    .no-saved p {
-        color: var(--text-light);
-        margin-bottom: 20px;
-        font-size: 16px;
-    }
-
-    @media (max-width: 768px) {
-        .job-footer {
-            flex-direction: column;
-            gap: 10px;
-            align-items: flex-start;
-        }
-
-        .job-actions {
-            width: 100%;
-        }
-
-        .btn-apply, .btn-remove {
-            flex: 1;
-        }
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- Header -->
 <div class="saved-jobs-header">
     <div class="container">
-        <h1>💾 Saved Jobs</h1>
-        <p>{{ saved_jobs_count }} job{{ saved_jobs_count|pluralize }} saved</p>
+        <h1>Công việc đã lưu</h1>
+        <p>{{ saved_jobs_count }} công việc đã lưu</p>
     </div>
 </div>
 
@@ -192,15 +29,15 @@
                     {% if saved_job.job.salary_min and saved_job.job.salary_max %}
                         ${{ saved_job.job.salary_min }}k - ${{ saved_job.job.salary_max }}k
                     {% else %}
-                        Negotiable
+                        Thương lượng
                     {% endif %}
                 </div>
             </div>
 
             <div class="job-meta">
-                <div class="job-meta-item">📍 {{ saved_job.job.city.city }}</div>
-                <div class="job-meta-item">⏰ {{ saved_job.job.job_type }}</div>
-                <div class="job-meta-item">📅 Posted {{ saved_job.job.created_at|timesince }} ago</div>
+                <div class="job-meta-item">Vị trí: {{ saved_job.job.location_short }}</div>
+                <div class="job-meta-item">Loại công việc: {{ saved_job.job.job_type }}</div>
+                <div class="job-meta-item">Đăng lúc {{ saved_job.job.created_at|timesince }} ago</div>
             </div>
 
             <div class="job-description">
@@ -208,18 +45,18 @@
             </div>
 
             <div class="job-footer">
-                <div class="saved-date">Saved {{ saved_job.created_at|date:"M d, Y" }}</div>
+                <div class="saved-date">Lưu vào {{ saved_job.created_at|date:"M d, Y" }}</div>
                 <div class="job-actions">
-                    <a href="{% url 'jobs:detail' saved_job.job.id %}" class="btn-apply">View Details</a>
-                    <a href="{% url 'jobs:save' saved_job.job.id %}" class="btn-remove" onclick="return confirm('Remove from saved?');">Remove</a>
+                    <a href="{% url 'jobs:detail' saved_job.job.id %}" class="btn-apply">Xem chi tiết</a>
+                    <a href="{% url 'jobs:save' saved_job.job.id %}" class="btn-remove" onclick="return confirm('Bạn chắc chắn muốn xóa chứ?');">Xóa khỏi danh sách lưu</a>
                 </div>
             </div>
         </div>
         {% endfor %}
     {% else %}
     <div class="no-saved">
-        <p>😔 You haven't saved any jobs yet.</p>
-        <a href="{% url 'jobs:list' %}" class="btn btn-primary">Browse Jobs →</a>
+        <p>Không có công việc nào được lưu</p>
+        <a href="{% url 'jobs:list' %}" class="btn btn-primary">Xem công việc →</a>
     </div>
     {% endif %}
 </div>

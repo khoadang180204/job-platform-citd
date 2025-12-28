@@ -1,0 +1,106 @@
+# =====================================================
+# HƯỚNG DẪN SỬ DỤNG CÁC SCRIPT TRONG THƯ MỤC scripts/
+# =====================================================
+# Sinh viên: Nguyễn Thành Khoa Đăng - MSSV: 24410136
+# =====================================================
+
+## CHUẨN BỊ TRƯỚC KHI CHẠY
+
+1. Kích hoạt môi trường ảo:
+   - Windows: venv\Scripts\activate
+   - Linux/Mac: source venv/bin/activate
+
+2. Đảm bảo đang ở thư mục gốc của project (chứa file manage.py)
+
+
+## DANH SÁCH CÁC SCRIPT VÀ CÁCH SỬ DỤNG
+
+=====================================================
+1. AUTO POST JOB - Tự động tạo job ngẫu nhiên
+=====================================================
+
+Mục đích: Tạo dữ liệu mẫu (fake jobs) để test hệ thống
+
+Cách chạy:
+   python manage.py auto_post_job --count 10
+   
+Tham số:
+   --count <số>     : Số lượng job cần tạo (mặc định: 1)
+   --category "IT"  : Chỉ định ngành nghề (mặc định: random)
+   --company_id 1   : Chỉ định company (mặc định: random)
+
+Ví dụ:
+   python manage.py auto_post_job --count 5 --category "IT"
+   python manage.py auto_post_job --company_id 1 --count 10
+
+
+=====================================================
+2. IMPORT LOCATIONS - Import dữ liệu địa điểm
+=====================================================
+
+Mục đích: Import Tỉnh/Thành phố, Quận/Huyện, Xã/Phường vào database
+
+Cách chạy:
+   python scripts/import_locations.py
+
+Hoặc chạy tiếp nếu bị gián đoạn:
+   python scripts/import_locations_continue.py
+
+
+=====================================================
+3. SEND MAIL TEST - Test gửi email
+=====================================================
+
+Mục đích: Kiểm tra chức năng gửi email
+
+Cách chạy:
+   python scripts/send_mail.py
+
+
+=====================================================
+4. IMPORT FILTER JOBS - Import danh mục & kỹ năng
+=====================================================
+
+Mục đích: Import JobCategory, Skills, Requirements từ file JSON
+
+Vị trí: scripts/Import filter jobs/
+
+File JSON:
+   - job_category.json : Danh mục ngành nghề
+   - skill.json        : Các kỹ năng theo ngành
+   - requirement.json  : Yêu cầu công việc
+
+
+=====================================================
+5. IMPORT CITY - Import dữ liệu thành phố
+=====================================================
+
+Mục đích: Import dữ liệu địa điểm từ JSON
+
+Vị trí: scripts/Import city/
+
+File JSON:
+   - tinh_tp.json   : Tỉnh/Thành phố
+   - quan_huyen.json: Quận/Huyện
+
+
+=====================================================
+LƯU Ý QUAN TRỌNG
+=====================================================
+
+- Cần RESET DATABASE trước khi chạy import đầy đủ
+  (Xem file: CẦN RESET DB TRƯỚC KHI CHẠY.md)
+
+- Thứ tự chạy import:
+  1. Import locations (địa điểm)
+  2. Import filter jobs (danh mục, kỹ năng)
+  3. Auto post job (tạo job mẫu)
+
+- Nếu gặp lỗi, kiểm tra:
+  + Đã activate venv chưa?
+  + Đang ở đúng thư mục chứa manage.py chưa?
+  + Database đã migrate chưa?
+
+=====================================================
+© 2025 JobFAST - Nguyễn Thành Khoa Đăng
+=====================================================

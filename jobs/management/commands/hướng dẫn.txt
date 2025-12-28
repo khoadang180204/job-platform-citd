@@ -1,0 +1,6 @@
+# Tạo 1 job random
+./venv/Scripts/python.exe manage.py auto_post_job --company_id 1
+# Tạo 10 jobs random
+./venv/Scripts/python.exe manage.py auto_post_job --company_id 1 --count 10
+# Tạo 5 jobs với category cụ thể
+./venv/Scripts/python.exe manage.py auto_post_job --company_id 1 --category "IT" --count 5

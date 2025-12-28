@@ -1,0 +1,76 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Quản lý việc làm - Bảng điều khiển{% endblock %}
+{% block page_title %}Quản lý việc làm{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <div class="panel-header">
+        <h3 class="panel-title">Tất cả tin tuyển dụng</h3>
+        <a href="{% url 'dashboard:create_job' %}" class="btn btn-primary">
+            Đăng tin mới
+        </a>
+    </div>
+    <div class="panel-body" style="padding: 0;">
+        {% if jobs %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Tên việc làm</th>
+                    <th>Danh mục</th>
+                    <th>Địa điểm</th>
+                    <th>Loại hình</th>
+                    <th>Ứng viên</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in jobs %}
+                <tr>
+                    <td>
+                        <strong>{{ job.title }}</strong>
+                        <div style="font-size: 12px; color: #64748b;">Đăng ngày {{ job.created_at|date:"d/m/Y" }}</div>
+                    </td>
+                    <td>{{ job.category.name|default:"-" }}</td>
+                    <td>{{ job.location_short|default:"-" }}</td>
+                    <td>{{ job.job_type }}</td>
+                    <td>
+                        <a href="{% url 'dashboard:job_applications' job.id %}"
+                            style="color: var(--primary-color); font-weight: 600;">
+                            {{ job.applicants.count }}
+                        </a>
+                    </td>
+                    <td>
+                        {% if job.is_active %}
+                        <span class="badge badge-active">Đang tuyển</span>
+                        {% else %}
+                        <span class="badge badge-inactive">Ngừng tuyển</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 8px;">
+                            <a href="{% url 'dashboard:edit_job' job.id %}" class="btn btn-secondary btn-sm">Sửa</a>
+                            <a href="{% url 'jobs:detail' job.id %}" class="btn btn-secondary btn-sm"
+                                target="_blank">Xem</a>
+                            <form method="POST" action="{% url 'dashboard:delete_job' job.id %}"
+                                style="display: inline;"
+                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa tin tuyển dụng này?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-title">Chưa có tin tuyển dụng nào</div>
+            <div class="empty-state-text">Bắt đầu bằng cách đăng tin tuyển dụng đầu tiên để thu hút ứng viên.</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

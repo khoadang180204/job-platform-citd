@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}JobPortal - Trang Chủ{% endblock %}
+{% block title %}JobFast - Trang Chủ{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
@@ -11,40 +11,37 @@
 <!-- Hero Section -->
 <section class="hero">
     <div class="container">
-        <h1>Discover your next <span class="highlight">dream job</span> today.</h1>
-        <p>We connect the best talent with top-tier companies. Thousands of jobs are waiting for you.</p>
+        <h1><span class="highlight">Tìm kiếm việc nhanh 24h</span>, việc làm mới nhất trên toàn quốc.</h1>
+        <p>Tiếp cận tin tuyển dụng việc làm mỗi ngày từ hàng nghìn doanh nghiệp uy tín tại Việt Nam</p>
         
         <div class="search-section">
             <form class="search-box" method="GET" action="{% url 'jobs:list' %}">
                 <!-- Keyword Search -->
                 <div class="search-input-group">
-                    <label>Job Title/Keyword</label>
-                    <input type="text" name="q" placeholder="Lập trình viên, Designer..." required>
+                    <input type="text" name="q" placeholder="Lập trình viên, Designer, Marketing...">
                 </div>
 
                 <!-- Location Dropdown -->
-                <div class="location-dropdown-wrapper">
-                    <label>Địa điểm</label>
-                    
+                <div class="location-dropdown-wrapper">                    
                     <button type="button" class="location-dropdown-toggle" id="locationToggle">
-                        <span class="location-text">Chọn thành phố</span>
+                        <span class="location-text">Chọn tỉnh/thành phố</span>
                         <span>▼</span>
                     </button>
 
                     <div class="location-dropdown-menu" id="locationDropdown">
                         <div class="location-search">
-                            <input type="text" id="citySearch" placeholder="Nhập Tính/Thành phố">
+                            <input type="text" id="citySearch" placeholder="Nhập tỉnh/thành phố">
                         </div>
                         <div class="location-options" id="locationOptions">
-                            {% for city in cities %}
+                            {% for province in provinces %}
                             <div class="location-option">
                                 <label>
-                                    <input type="checkbox" name="cities" value="{{ city.id }}" class="city-checkbox">
-                                    <span>{{ city.city }}</span>
+                                    <input type="checkbox" name="provinces" value="{{ province.code }}" class="province-checkbox">
+                                    <span>{{ province.name_with_type }}</span>
                                 </label>
                             </div>
                             {% empty %}
-                            <div style="padding: 10px; color: var(--text-light); text-align: center;">No cities available</div>
+                            <div style="padding: 10px; color: var(--text-light); text-align: center;">Không có dữ liệu</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -59,108 +56,191 @@
     </div>
 </section>
 
-<!-- Stats Section -->
-<section class="container">
-    <div class="stats">
-        <div class="stat-card">
-            <div class="stat-number">12k+</div>
-            <div class="stat-label">Live Jobs</div>
+<!-- Matching Jobs Section -->
+<section class="featured-jobs matching-jobs-section">
+    <div class="section-header">
+        <h2 class="section-title">Việc làm tốt nhất <p style="font-size: 14px; font-weight: 500;">Được đề xuất từ hệ thống NLP</p></h2>
+        {% if has_skill_profile %}
+        <a href="{% url 'accounts:skill_profile' %}" class="view-all-link">Cập nhật kỹ năng →</a>
+        {% endif %}
+    </div>
+    
+    <div class="container">
+        {% if user.is_authenticated %}
+            {% if has_skill_profile %}
+                {% if matching_jobs %}
+                <div style="padding: 10px;"></div>
+                <div class="jobs-grid">
+                    {% for item in matching_jobs %}
+                    <div class="job-card" onclick="window.location='{% url 'jobs:detail' item.job.id %}'">
+                        <div class="matching-score">
+                            <span class="score-badge">{{ item.score }}% phù hợp</span>
+                        </div>
+                        <div class="job-card-header">
+                            {% if item.job.company.logo %}
+                            <div class="company-logo">
+                                <img src="{{ item.job.company.logo.url }}" alt="{{ item.job.company.name }}">
+                            </div>
+                            {% else %}
+                            <div class="company-logo-placeholder">
+                                {{ item.job.company.name|slice:":1"|upper }}
+                            </div>
+                            {% endif %}
+                            <div class="job-card-info">
+                                <div class="job-company">{{ item.job.company.name }}</div>
+                                <div class="job-title">{{ item.job.title }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="job-meta">
+                            <div class="job-meta-item"><i class="fa-solid fa-location-dot"></i> {{ item.job.location_short }}</div>
+                            <div class="job-meta-item"><i class="fa-regular fa-clock"></i> {{ item.job.job_type }}</div>
+                        </div>
+                        
+                        <div class="job-salary">
+                            {% if item.job.salary_min and item.job.salary_max %}
+                                {{ item.job.salary_min }}tr - {{ item.job.salary_max }}tr VNĐ
+                            {% elif item.job.salary_min %}
+                                Từ {{ item.job.salary_min }}tr VNĐ
+                            {% else %}
+                                Thương lượng
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-matching-jobs">
+                    <p>Chưa tìm thấy việc làm phù hợp với kỹ năng của bạn.</p>
+                    <a href="{% url 'jobs:list' %}" class="btn btn-primary">Khám phá tất cả việc làm</a>
+                </div>
+                {% endif %}
+            {% else %}
+            <!-- Chưa thiết lập skill profile -->
+            <div class="skill-profile-prompt">
+                <h3>Thiết lập hồ sơ kỹ năng</h3>
+                <p>Hãy cập nhật kỹ năng và lĩnh vực quan tâm để chúng tôi gợi ý những việc làm phù hợp nhất với bạn!</p>
+                <a href="{% url 'accounts:skill_profile' %}" class="btn btn-primary">Cập nhật ngay</a>
+            </div>
+            {% endif %}
+        {% else %}
+        <!-- Chưa đăng nhập -->
+        <div class="skill-profile-prompt">
+            <h3>Đăng nhập để xem việc làm phù hợp</h3>
+            <p>Tạo tài khoản và thiết lập hồ sơ kỹ năng để nhận gợi ý việc làm được cá nhân hóa cho bạn!</p>
+            <div class="prompt-buttons">
+                <a href="{% url 'accounts:register' %}" class="btn btn-primary">Đăng ký miễn phí</a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-secondary">Đăng nhập</a>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">8k+</div>
-            <div class="stat-label">Companies</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">50k+</div>
-            <div class="stat-label">Candidates</div>
-        </div>
+        {% endif %}
+        <div style="padding: 10px;"></div>
     </div>
 </section>
 
-<!-- Featured Jobs Section -->
+<!-- Latest Jobs Section -->
 <section class="featured-jobs">
+    <div class="section-header">
+        <img src="/media/section/section-1.png" alt="Plus" style="width: 100%">
+    </div>
+    
     <div class="container">
-        <h2 class="section-title">Featured Jobs</h2>
-        
-        <div class="jobs-grid">
-            {% for job in featured_jobs %}
-            <div class="job-card" onclick="window.location='{% url 'jobs:detail' job.id %}'">
+        <!-- Category Filter Tabs with Scroll Buttons -->
+        <div class="category-filter-wrapper">
+            <button class="category-filter-scroll-btn scroll-left" id="scrollLeft">‹</button>
+            <div class="category-filter" id="categoryFilter">
+                <button class="category-tab active" data-category="all">Tất cả</button>
+                {% for category in categories %}
+                <button class="category-tab" data-category="{{ category.id }}">{{ category.name }}</button>
+                {% endfor %}
+            </div>
+            <button class="category-filter-scroll-btn scroll-right" id="scrollRight">›</button>
+        </div>
+        <div class="jobs-grid" id="jobsGrid">
+            {% for job in latest_jobs %}
+            <div class="job-card" data-category="{{ job.category.id|default:'none' }}" onclick="window.location='{% url 'jobs:detail' job.id %}'">
                 <div class="job-card-header">
-                    <div>
+                    {% if job.company.logo %}
+                    <div class="company-logo">
+                        <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}">
+                    </div>
+                    {% else %}
+                    <div class="company-logo-placeholder">
+                        {{ job.company.name|slice:":1"|upper }}
+                    </div>
+                    {% endif %}
+                    <div class="job-card-info">
                         <div class="job-company">{{ job.company.name }}</div>
                         <div class="job-title">{{ job.title }}</div>
                     </div>
                 </div>
                 
                 <div class="job-meta">
-                    <div class="job-meta-item">📍 {{ job.city.city }}</div>
-                    <div class="job-meta-item">⏰ {{ job.job_type }}</div>
+                    <div class="job-meta-item"><i class="fa-solid fa-location-dot"></i> {{ job.location_short }}</div>
+                    <div class="job-meta-item"><i class="fa-regular fa-clock"></i> {{ job.job_type }}</div>
                 </div>
-                
-                <p class="text-muted" style="font-size: 13px; margin-bottom: 10px;">
-                    {{ job.description|truncatewords:20 }}
-                </p>
                 
                 <div class="job-salary">
                     {% if job.salary_min and job.salary_max %}
-                        ${{ job.salary_min }}k - ${{ job.salary_max }}k / year
+                        {{ job.salary_min }}tr - {{ job.salary_max }}tr VNĐ
+                    {% elif job.salary_min %}
+                        Từ {{ job.salary_min }}tr VNĐ
                     {% else %}
-                        Negotiable
+                        Thương lượng
                     {% endif %}
                 </div>
             </div>
             {% empty %}
-            <p class="text-center text-muted" style="grid-column: 1 / -1;">No featured jobs available yet.</p>
+            <p class="text-center text-muted" style="grid-column: 1 / -1;">Chưa có công việc nào.</p>
             {% endfor %}
         </div>
 
         <div class="view-all-btn">
-            <a href="{% url 'jobs:list' %}" class="btn btn-primary">View All Jobs →</a>
+            <a href="{% url 'jobs:list' %}" class="btn btn-primary">Xem tất cả việc làm →</a>
         </div>
     </div>
 </section>
 
 <!-- CTA Section -->
-<section class="container">
+<section class="browser-container">
     <div class="cta-section">
-        <h2>Ready to Find Your Next Opportunity?</h2>
-        <p style="margin-bottom: 30px; font-size: 16px;">Join thousands of job seekers already using JobPortal</p>
+        <h2>Hãy để chúng tôi giúp bạn có một trải nghiệm hạnh phúc<br>trên hành trình sự nghiệp của bạn</h2>
+        <p style="margin-bottom: 30px; font-size: 16px;">Tham gia cùng hàng nghìn ứng viên đang sử dụng JobFast</p>
         
         <div class="cta-buttons">
             {% if user.is_authenticated %}
-                <a href="{% url 'jobs:list' %}" class="btn" style="background-color: var(--secondary-color); color: var(--text-dark); font-weight: bold;">Browse Jobs</a>
+                <a href="{% url 'jobs:list' %}" class="btn" style="background-color: var(--secondary-color); color: var(--text-dark); font-weight: bold;">Xem tin tuyển dụng mới</a>
+                <a href="{% url 'dashboard:create_job' %}" class="btn" style="background-color: orange; color: var(--text-dark); font-weight: bold;">Bạn là nhà tuyển dụng? Đăng tin ngay</a>
             {% else %}
-                <a href="{% url 'accounts:register' %}" class="btn" style="background-color: var(--secondary-color); color: var(--text-dark); font-weight: bold;">Sign Up Now</a>
-                <a href="{% url 'accounts:login' %}" class="btn btn-outline" style="border-color: var(--white); color: var(--white);">Login</a>
+                <a href="{% url 'accounts:register' %}" class="btn" style="background-color: var(--secondary-color); color: var(--text-dark); font-weight: bold;">Đăng ký ngay</a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline" style="border-color: var(--white); color: var(--white);">Đăng nhập</a>
             {% endif %}
         </div>
     </div>
 </section>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-    // Initialize cities data
-    const allCities = {
-        {% for city in cities %}
-        '{{ city.id }}': '{{ city.city }}',
+    // Initialize provinces data
+    const allProvinces = {
+        {% for province in provinces %}
+        '{{ province.code }}': '{{ province.name }}',
         {% endfor %}
     };
-
-    // Log for debugging
-    console.log('Cities loaded:', Object.keys(allCities).length);
-    console.log('Cities:', allCities);
 
     // Toggle dropdown
     const locationToggle = document.getElementById('locationToggle');
     const locationDropdown = document.getElementById('locationDropdown');
     const citySearch = document.getElementById('citySearch');
-    const cityCheckboxes = document.querySelectorAll('.city-checkbox');
+    const provinceCheckboxes = document.querySelectorAll('.province-checkbox');
 
     if (locationToggle) {
         locationToggle.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             locationDropdown.classList.toggle('active');
-            if (locationDropdown.classList.contains('active')) {
+            if (locationDropdown.classList.contains('active') && citySearch) {
                 citySearch.focus();
             }
         });
@@ -185,28 +265,28 @@
         });
     }
 
-    // Update selected cities
-    function updateSelectedCities() {
-        const checkboxes = document.querySelectorAll('input[name="cities"]:checked');
-        const selectedCities = Array.from(checkboxes).map(cb => {
-            return allCities[cb.value] || cb.value;
+    // Update selected provinces
+    function updateSelectedProvinces() {
+        const checkboxes = document.querySelectorAll('input[name="provinces"]:checked');
+        const selectedProvinces = Array.from(checkboxes).map(cb => {
+            return allProvinces[cb.value] || cb.value;
         }).join(', ');
         
         const selectedText = document.querySelector('.location-text');
-        const selectedCitiesText = document.getElementById('selectedCitiesText');
+        const selectedProvincesText = document.getElementById('selectedCitiesText');
         
-        if (selectedCities && checkboxes.length > 0) {
-            selectedText.textContent = `${checkboxes.length} thành phố`;
-            selectedCitiesText.textContent = selectedCities;
+        if (selectedProvinces && checkboxes.length > 0) {
+            selectedText.textContent = `${checkboxes.length} Tỉnh/TP`;
+            selectedProvincesText.textContent = selectedProvinces;
         } else {
-            selectedText.textContent = 'Chọn thành phố';
-            selectedCitiesText.textContent = '';
+            selectedText.textContent = 'Chọn tỉnh/thành phố';
+            selectedProvincesText.textContent = '';
         }
     }
 
     // Add change event to all checkboxes
-    cityCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', updateSelectedCities);
+    provinceCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectedProvinces);
     });
 
     // Close dropdown when clicking outside
@@ -222,6 +302,65 @@
         locationDropdown.addEventListener('click', function(e) {
             e.stopPropagation();
         });
+    }
+
+    // Category Filter Functionality
+    // Chỉ lấy job-card trong #jobsGrid, không lấy job-card trong matching-jobs-section
+    const categoryTabs = document.querySelectorAll('.category-tab');
+    const jobCards = document.querySelectorAll('#jobsGrid .job-card');
+
+    categoryTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            categoryTabs.forEach(t => t.classList.remove('active'));
+            // Add active to clicked tab
+            this.classList.add('active');
+            
+            const selectedCategory = this.dataset.category;
+            
+            // Filter job cards
+            jobCards.forEach(card => {
+                if (selectedCategory === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    const cardCategory = card.dataset.category;
+                    if (cardCategory === selectedCategory) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        });
+    });
+
+    // Category Filter Scroll Buttons
+    const scrollLeftBtn = document.getElementById('scrollLeft');
+    const scrollRightBtn = document.getElementById('scrollRight');
+    const categoryFilter = document.getElementById('categoryFilter');
+
+    if (scrollLeftBtn && scrollRightBtn && categoryFilter) {
+        const scrollAmount = 200;
+
+        function updateScrollButtons() {
+            const { scrollLeft, scrollWidth, clientWidth } = categoryFilter;
+            scrollLeftBtn.classList.toggle('hidden', scrollLeft <= 0);
+            scrollRightBtn.classList.toggle('hidden', scrollLeft >= scrollWidth - clientWidth - 5);
+        }
+
+        scrollLeftBtn.addEventListener('click', () => {
+            categoryFilter.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        });
+
+        scrollRightBtn.addEventListener('click', () => {
+            categoryFilter.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        });
+
+        categoryFilter.addEventListener('scroll', updateScrollButtons);
+        window.addEventListener('resize', updateScrollButtons);
+        
+        // Initial check
+        setTimeout(updateScrollButtons, 100);
     }
 </script>
 {% endblock %}
