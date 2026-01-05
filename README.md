@@ -57,7 +57,7 @@ JobFAST là một nền tảng tuyển dụng trực tuyến được xây dựn
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/khoadang180204/job-platform-citd
+git clone https://github.com/khoadang180204/job-platform
 cd job-platform
 
 # 2. Tạo môi trường ảo
