@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hồ sơ kỹ năng - JobPortal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="skill-profile-header">
+    <div class="container">
+        <h1>Cập nhật kĩ năng</h1>
+        <p>Chọn ngành nghề và kỹ năng của bạn để hệ thống tìm việc làm phù hợp</p>
+    </div>
+</div>
+<div class="skill-profile-container">
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Bio Section -->
+        <div class="profile-card">
+            <div class="profile-card-title">
+                <span><i class="fa-solid fa-pen-to-square"></i></span> Giới thiệu bản thân
+            </div>
+            <div class="form-group">
+                <label for="bio">Mô tả về bản thân (tùy chọn)</label>
+                <textarea name="bio" id="bio" placeholder="Ví dụ: Tôi là lập trình viên với 3 năm kinh nghiệm về Python và Django. Mục tiêu của tôi là trở thành Full-stack Developer...">{{ profile.bio|default:'' }}</textarea>
+            </div>
+        </div>
+
+        <!-- Categories Section -->
+        <div class="profile-card">
+            <div class="profile-card-title">
+                <span><i class="fa-solid fa-building"></i></span> Ngành nghề quan tâm
+            </div>
+            <div class="checkbox-grid" id="categoriesGrid">
+                {% for category in categories %}
+                <label class="checkbox-item {% if category.id in selected_categories %}checked{% endif %}">
+                    <input type="checkbox" name="categories" value="{{ category.id }}" 
+                           {% if category.id in selected_categories %}checked{% endif %}>
+                    <span>{{ category.name }}</span>
+                </label>
+                {% empty %}
+                <p style="color: var(--text-light); text-align: center; grid-column: 1 / -1;">Chưa có ngành nghề nào</p>
+                {% endfor %}
+            </div>
+            <div class="selected-count" id="categoryCount">
+                Đã chọn: <span>{{ selected_categories|length }}</span> ngành nghề
+            </div>
+        </div>
+
+        <!-- Skills Section -->
+        <div class="profile-card">
+            <div class="profile-card-title">
+                <span><i class="fa-solid fa-lightbulb"></i></span> Kỹ năng của bạn
+            </div>
+            <div style="max-height: 400px; overflow-y: auto;">
+                {% regroup skills by category as skill_groups %}
+                {% for group in skill_groups %}
+                <div class="skill-category-section">
+                    <div class="skill-category-title">{{ group.grouper|default:"Khác" }}</div>
+                    <div class="skill-grid">
+                        {% for skill in group.list %}
+                        <label class="checkbox-item {% if skill.id in selected_skills %}checked{% endif %}">
+                            <input type="checkbox" name="skills" value="{{ skill.id }}"
+                                   {% if skill.id in selected_skills %}checked{% endif %}>
+                            <span>{{ skill.name }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% empty %}
+                <p style="color: var(--text-light); text-align: center;">Chưa có kỹ năng nào trong hệ thống</p>
+                {% endfor %}
+            </div>
+            
+            <div class="selected-count" id="skillCount">
+                Đã chọn: <span>{{ selected_skills|length }}</span> kỹ năng
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fa-solid fa-floppy-disk"></i> Lưu hồ sơ kỹ năng
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.querySelectorAll('.checkbox-item input').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            this.parentElement.classList.add('checked');
+        } else {
+            this.parentElement.classList.remove('checked');
+        }
+        updateCounts();
+    });
+});
+
+function updateCounts() {
+    const categoryCount = document.querySelectorAll('input[name="categories"]:checked').length;
+    const skillCount = document.querySelectorAll('input[name="skills"]:checked').length;
+    
+    document.querySelector('#categoryCount span').textContent = categoryCount;
+    document.querySelector('#skillCount span').textContent = skillCount;
+}
+</script>
+{% endblock %}

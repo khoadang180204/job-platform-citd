@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}JobFast - Nền tảng tuyển dụng{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="{% url 'home' %}" class="logo">
+                    <img src="/media/logo/logo.png" alt="JobFast" style="width: 150px">
+                </a>
+            </div>
+            
+            <ul class="navbar-menu">
+                {% if user.is_authenticated %}
+                    {% if user.profile.is_employer %}
+                        <!-- Employer Menu -->
+                        <li><a href="{% url 'jobs:list' %}" class="nav-link">Việc làm</a></li>
+                        <li><a href="{% url 'dashboard:index' %}" class="nav-link">Bảng điều khiển</a></li>
+                        <li><a href="{% url 'dashboard:company_settings' %}" class="nav-link">Thiết lập</a></li>
+                        <li><a href="{% url 'dashboard:create_job' %}" class="nav-link" style="background-color: var(--primary-color); color: var(--white); padding: 8px 16px; border-radius: var(--radius);">Đăng tuyển ngay</a></li>
+                    {% else %}
+                        <!-- Candidate Menu -->
+                        <li><a href="{% url 'jobs:list' %}" class="nav-link">Việc làm</a></li>
+                        <li><a href="{% url 'accounts:my_applications' %}" class="nav-link">Việc đã ứng tuyển</a></li>
+                        <li><a href="{% url 'accounts:saved_jobs' %}" class="nav-link">Việc đã lưu</a></li>
+                        <li><a href="{% url 'accounts:skill_profile' %}" class="nav-link">Cập nhật kỹ năng</a></li>
+                        <li><a href="{% url 'accounts:profile' %}" class="nav-link">Thiết lập</a></li>
+                    {% endif %}
+                    
+                    <li class="dropdown">
+                        <button class="nav-link dropdown-toggle">
+                            Xin chào, {{ user.first_name|default:user.username }}
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="{% url 'accounts:logout' %}" class="dropdown-item logout">Đăng xuất</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <li><a href="{% url 'accounts:login' %}" class="nav-link">Đăng nhập</a></li>
+                    <li><a href="{% url 'accounts:register' %}" class="btn-primary">Đăng ký</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Messages Alert -->
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {% if message.tags == 'success' %}
+                        <i class="fa-solid fa-circle-check"></i>
+                    {% elif message.tags == 'error' or message.tags == 'danger' %}
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    {% elif message.tags == 'warning' %}
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    {% else %}
+                        <i class="fa-solid fa-circle-info"></i>
+                    {% endif %}
+                    <span>{{ message }}</span>
+                    <button class="alert-close"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <div class="box-content">
+        <div class="container">
+            <div class="box-seo-job-search-container"><div class="box-seo-job-search">
+                <div class="box-seo-job-search__title">
+                    Cơ hội ứng tuyển việc làm với đãi ngộ hấp dẫn tại các công ty hàng đầu
+                </div>
+                
+                <div class="box-seo-job-search__header">
+                    <div>
+                        Trước sự chuyển mình không ngừng của thế giới và sự phát triển vượt bậc của nền kinh tế, 
+                                        rất nhiều ngành nghề trở nên khan hiếm nhân lực hoặc thiếu nhân lực giỏi, nhân lực tay nghề cao, trong đó không thể không kể tới vị trí trưởng phòng marketing.
+                                    Trong bối cảnh đó, JobFAST mang trong mình sứ mệnh cao cả nhằm kết nối những Nhà tuyển dụng uy tín với ứng viên tiềm năng.
+                    </div>
+                    <div>
+                        Những yếu tố khiến JobFAST trở thành điểm dừng chân lý tưởng cho “người tìm việc” và “việc tìm người”:
+                    </div>
+                </div>
+
+                <div class="box-seo-job-search__content">
+                    <div class="box-seo-job-search__content-block">
+                        <div class="box-seo-job-search__content-block-title">
+                            Việc làm chất lượng
+                        </div>
+                        <div class="box-seo-job-search__content-block-detail">
+                            <ul>
+                                <li>
+                                    Hàng chục nghìn tin tuyển dụng việc làm chất lượng cao được “làm mới” mỗi ngày từ những Nhà tuyển dụng uy tín.
+                                </li>
+                                <li>
+                                    Tính năng gợi ý việc làm thông minh giúp ứng viên chủ động tiếp cận tin tuyển dụng phù hợp với năng lực và mong muốn của bản thân.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <br>
+                    <div class="box-seo-job-search__content-block">
+                        <div class="box-seo-job-search__content-block-title">
+                            Hỗ trợ Nhà tuyển dụng
+                        </div>
+                        <div class="box-seo-job-search__content-block-detail">
+                            <ul>
+                                <li>
+                                    Đăng tin tuyển dụng miễn phí, đơn giản và nhanh chóng.
+                                </li>
+                                <li>
+                                    Nguồn ứng viên khổng lồ từ nhiều ngành nghề, lĩnh vực khác nhau.
+                                </li>
+                                <li>
+                                    NLP đề xuất công việc phù hợp, lọc thông tin nổi bật và tự động sắp xếp theo điểm phù hợp.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-seo-job-search__footer">
+                    Tại JobFAST, bạn có thể tìm thấy những tin tuyển dụng
+                                vị trí trưởng phòng marketing
+                            với lương thưởng hấp dẫn và đãi ngộ cạnh tranh. Nhanh tay tạo CV để ứng tuyển vào các vị trí việc làm mới nhất hấp dẫn tại
+                    việc làm mới nhất tại Hà Nội, 
+                    việc làm mới nhất tại TP.HCM và việc làm tại những địa phương lân cận, từng bước tiến gần tới con đường sự nghiệp mơ ước!
+                </div>
+            </div></div>
+        </div>
+    </div>  
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <img src="/media/logo/logo.png" alt="JobFast" style="width: 250px">
+                    <p>Với năng lực lõi là công nghệ, sứ mệnh của JobFAST đặt ra cho mình là thay đổi thị trường tuyển dụng - nhân sự ngày một hiệu quả hơn. Bằng công nghệ, chúng tôi tạo ra nền tảng cho phép người lao động tạo CV, phát triển được các kỹ năng cá nhân, xây dựng hình ảnh chuyên nghiệp trong mắt nhà tuyển dụng và tiếp cận với các cơ hội việc làm phù hợp.</p>
+                </div>
+                <div class="footer-section">
+                    <h4 style="color: #000;">Liên kết nhanh</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Trang chủ</a></li>
+                        <li><a href="{% url 'jobs:list' %}">Việc làm</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 style="color: #000;">Liên hệ</h4>
+                    <p>Email: 24410136@ms.uit.edu.vn</p>
+                    <p>Điện thoại: (+84) 123 456 789</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 JobFAST. Bản quyền thuộc về JobFAST.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    <!-- Toast Notification Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.alert-close').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const alert = this.closest('.alert');
+                    alert.style.animation = 'fadeOut 0.3s ease forwards';
+                    setTimeout(() => alert.remove(), 300);
+                });
+            });
+            
+            // Tự động xóa toast sau 5 giây
+            document.querySelectorAll('.alert').forEach(function(alert) {
+                setTimeout(() => {
+                    if (alert.parentElement) {
+                        alert.remove();
+                    }
+                }, 5000);
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

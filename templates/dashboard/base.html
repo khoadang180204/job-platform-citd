@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bảng điều khiển - JobFast{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="{% url 'home' %}" class="sidebar-logo">
+                    <img src="/media/logo/logo_panel.png" alt="JobFast" style="width: 150px">
+                </a>
+            </div>
+
+            <div class="sidebar-company">
+                <div class="company-avatar">
+                    {% if company.logo %}
+                        <img src="{{ company.logo.url }}" alt="{{ company.name }}">
+                    {% else %}
+                        {{ company.name|first|upper }}
+                    {% endif %}
+                </div>
+                <div class="company-name">{{ company.name }}</div>
+                <div class="company-role">Tài khoản nhà tuyển dụng</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Menu chính</div>
+                    
+                    <a href="{% url 'dashboard:index' %}" class="nav-item {% if active_menu == 'overview' %}active{% endif %}">
+                        <span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span>
+                        <span class="nav-text">Tổng quan</span>
+                    </a>
+                    
+                    <a href="{% url 'dashboard:manage_jobs' %}" class="nav-item {% if active_menu == 'jobs' %}active{% endif %}">
+                        <span class="nav-icon"><i class="fa-solid fa-briefcase"></i></span>
+                        <span class="nav-text">Quản lý việc làm</span>
+                        {% if active_jobs_count %}
+                        <span class="nav-badge">{{ active_jobs_count }}</span>
+                        {% endif %}
+                    </a>
+                    
+                    <a href="{% url 'dashboard:create_job' %}" class="nav-item {% if active_menu == 'create_job' %}active{% endif %}">
+                        <span class="nav-icon"><i class="fa-solid fa-plus"></i></span>
+                        <span class="nav-text">Đăng tin mới</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Tuyển dụng</div>
+                    
+                    <a href="{% url 'dashboard:all_applications' %}" class="nav-item {% if active_menu == 'applications' %}active{% endif %}">
+                        <span class="nav-icon"><i class="fa-solid fa-inbox"></i></span>
+                        <span class="nav-text">Đơn ứng tuyển</span>
+                        {% if pending_applications_count %}
+                        <span class="nav-badge">{{ pending_applications_count }}</span>
+                        {% endif %}
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Cài đặt</div>
+                    
+                    <a href="{% url 'dashboard:company_settings' %}" class="nav-item {% if active_menu == 'settings' %}active{% endif %}">
+                        <span class="nav-icon"><i class="fa-solid fa-building"></i></span>
+                        <span class="nav-text">Thông tin công ty</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="{% url 'home' %}" class="btn-back-site">
+                    <span><i class="fa-solid fa-globe"></i></span>
+                    <span>Về trang chủ</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h1 class="page-title">{% block page_title %}Bảng điều khiển{% endblock %}</h1>
+                </div>
+                <div class="header-right">
+                    <div class="header-user">
+                        <div class="header-user-avatar">
+                            {{ user.first_name|default:user.username|first|upper }}
+                        </div>
+                        <span class="header-user-name">{{ user.first_name|default:user.username }}</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

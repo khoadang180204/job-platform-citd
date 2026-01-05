@@ -1,0 +1,33 @@
+Tài liệu này hướng dẫn cách sử dụng các script Python để thiết lập dữ liệu mẫu
+cho database khi bắt đầu phát triển hoặc testing.
+
+BƯỚC 1: Tạo và kích hoạt môi trường ảo
+Từ thư mục gốc job-platform, chạy lệnh:
+-----------------------------------------
+# Windows CMD:
+python -m venv venv
+venv\Scripts\activate
+
+# Windows PowerShell:
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+
+# Linux/macOS:
+python3 -m venv venv
+source venv/bin/activate
+
+
+BƯỚC 2: Import dữ liệu vào database
+Chạy lệnh:
+-----------------------------------------
+# Import dữ liệu ngành nghề, kỹ năng
+python scripts/import_job_data.py
+
+# Import dữ liệu địa lý (Tỉnh/Huyện/Xã)
+python scripts/import_locations.py
+
+# Tạo 10 job ngẫu nhiên
+python scripts/auto_post_job.py --count 10
+
+# Tạo 5 job cho ngành IT
+python scripts/auto_post_job.py --category "IT" --count 5

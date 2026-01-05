@@ -1,0 +1,75 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Đơn ứng tuyển - Bảng điều khiển{% endblock %}
+{% block page_title %}Tất cả đơn ứng tuyển{% endblock %}
+
+{% block content %}
+<div class="panel" style="margin-bottom: 24px;">
+    <div class="panel-body" style="padding: 12px 24px;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="?status="
+                class="btn {% if not current_status %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+                Tất cả ({{ total_count }})
+            </a>
+            <a href="?status=Pending"
+                class="btn {% if current_status == 'Pending' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+                Chờ xét duyệt ({{ pending_count }})
+            </a>
+            <a href="?status=Reviewed"
+                class="btn {% if current_status == 'Reviewed' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+                Đã xem ({{ reviewed_count }})
+            </a>
+            <a href="?status=Accepted"
+                class="btn {% if current_status == 'Accepted' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+                Đã chấp nhận ({{ accepted_count }})
+            </a>
+            <a href="?status=Rejected"
+                class="btn {% if current_status == 'Rejected' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+                Đã từ chối ({{ rejected_count }})
+            </a>
+        </div>
+    </div>
+</div>
+
+{% if applications %}
+{% for application in applications %}
+<div class="application-card">
+    <div class="applicant-photo">
+        {% if application.photo %}
+        <img src="{{ application.photo.url }}" alt="{{ application.full_name }}">
+        {% else %}
+        <div class="photo-placeholder"><i class="fa-solid fa-user"></i></div>
+        {% endif %}
+    </div>
+
+    <div class="applicant-info">
+        <div class="applicant-name">{{ application.full_name|default:application.user.get_full_name|default:application.user.username }}</div>
+        <div class="applicant-job">Ứng tuyển: {{ application.job.title }}</div>
+        <div class="applicant-meta">
+            <span><i class="fa-solid fa-envelope"></i> {{ application.email|default:application.user.email }}</span>
+            <span><i class="fa-solid fa-phone"></i> {{ application.phone|default:"Chưa cung cấp" }}</span>
+            <span><i class="fa-solid fa-calendar"></i> {{ application.created_at|date:"d/m/Y" }}</span>
+        </div>
+    </div>
+
+    <div class="application-actions">
+        <span class="badge badge-{{ application.status|lower }}">
+            {% if application.status == 'Pending' %}Chờ xét duyệt
+            {% elif application.status == 'Reviewed' %}Đã xem
+            {% elif application.status == 'Accepted' %}Đã chấp nhận
+            {% elif application.status == 'Rejected' %}Đã từ chối
+            {% else %}{{ application.status }}{% endif %}
+        </span>
+        <a href="{% url 'dashboard:application_detail' application.id %}" class="btn btn-primary btn-sm">Xem chi tiết</a>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="panel">
+    <div class="empty-state">
+        <div class="empty-state-title">Chưa có đơn ứng tuyển nào</div>
+        <div class="empty-state-text">Đơn ứng tuyển từ các ứng viên sẽ xuất hiện tại đây.</div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

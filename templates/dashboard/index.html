@@ -1,0 +1,180 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Tổng quan - Bảng điều khiển{% endblock %}
+{% block page_title %}Tổng quan{% endblock %}
+
+{% block content %}
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-icon primary"><i class="fa-solid fa-briefcase"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">{{ active_jobs }}</div>
+            <div class="stat-label">Việc làm đang tuyển</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon warning"><i class="fa-solid fa-inbox"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">{{ total_applicants }}</div>
+            <div class="stat-label">Tổng đơn ứng tuyển</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon success"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">{{ hired }}</div>
+            <div class="stat-label">Đã tuyển dụng</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon info"><i class="fa-solid fa-hourglass-half"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">{{ pending_count }}</div>
+            <div class="stat-label">Chờ xem xét</div>
+        </div>
+    </div>
+</div>
+
+<div class="charts-grid">
+    <div class="panel">
+        <div class="panel-header">
+            <h3 class="panel-title"><i class="fa-solid fa-chart-line"></i> Đơn ứng tuyển tuần này</h3>
+        </div>
+        <div class="panel-body">
+            <div class="chart-container">
+                <canvas id="applicationsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <h3 class="panel-title"><i class="fa-solid fa-chart-line"></i> Việc làm theo loại</h3>
+        </div>
+        <div class="panel-body">
+            <div class="chart-container">
+                <canvas id="jobTypesChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h3 class="panel-title">Việc làm gần đây</h3>
+        <a href="{% url 'dashboard:create_job' %}" class="btn btn-primary btn-sm">
+            Đăng tin mới
+        </a>
+    </div>
+    <div class="panel-body" style="padding: 0;">
+        {% if recent_jobs %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Tên việc làm</th>
+                    <th>Ngày đăng</th>
+                    <th>Ứng viên</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in recent_jobs %}
+                <tr>
+                    <td>
+                        <strong>{{ job.title }}</strong>
+                        <div style="font-size: 12px; color: #64748b;">{{ job.location_short }}</div>
+                    </td>
+                    <td>{{ job.created_at|date:"d/m/Y" }}</td>
+                    <td>
+                        <a href="{% url 'dashboard:job_applications' job.id %}"
+                            style="color: var(--primary-color); font-weight: 600;">
+                            {{ job.applicants.count }} ứng viên
+                        </a>
+                    </td>
+                    <td>
+                        {% if job.is_active %}
+                        <span class="badge badge-active">Đang tuyển</span>
+                        {% else %}
+                        <span class="badge badge-inactive">Ngừng tuyển</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 8px;">
+                            <a href="{% url 'dashboard:edit_job' job.id %}" class="btn btn-secondary btn-sm">Sửa</a>
+                            <a href="{% url 'jobs:detail' job.id %}" class="btn btn-secondary btn-sm"
+                                target="_blank">Xem</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-title">Chưa có tin tuyển dụng nào</div>
+            <div class="empty-state-text">Bắt đầu bằng cách đăng tin tuyển dụng đầu tiên để thu hút ứng viên.</div>
+            <a href="{% url 'dashboard:create_job' %}" class="btn btn-primary">Đăng tin ngay</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const applicationsData = {{ applications_per_day| safe }};
+    const applicationsCtx = document.getElementById('applicationsChart').getContext('2d');
+    new Chart(applicationsCtx, {
+        type: 'bar',
+        data: {
+            labels: applicationsData.labels,
+            datasets: [{
+                label: 'Đơn ứng tuyển',
+                data: applicationsData.data,
+                backgroundColor: '#1a8a7a',
+                borderColor: '#0f5f54',
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+
+    const jobTypesData = {{ job_category_data| safe }};
+    const jobTypesCtx = document.getElementById('jobTypesChart').getContext('2d');
+    new Chart(jobTypesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: jobTypesData.labels,
+            datasets: [{
+                data: jobTypesData.data,
+                backgroundColor: ['#1a8a7a', '#2db8a6', '#ffc107', '#ef4444', '#6366f1'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+</script>
+{% endblock %}

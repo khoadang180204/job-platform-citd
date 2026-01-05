@@ -1,0 +1,239 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Chỉnh sửa việc làm - Bảng điều khiển{% endblock %}
+{% block page_title %}Chỉnh sửa việc làm{% endblock %}
+
+{% block content %}
+<form method="POST" class="panel">
+    {% csrf_token %}
+    <div class="panel-header">
+        <h3 class="panel-title">Chỉnh sửa: {{ job.title }}</h3>
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label class="form-label">Tiêu đề công việc <span class="required">*</span></label>
+            <input type="text" name="title" class="form-control" value="{{ job.title }}" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Danh mục công việc <span class="required">*</span></label>
+                <select name="category" class="form-control" required>
+                    <option value="">-- Chọn danh mục --</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}" {% if job.category.id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Loại hình công việc <span class="required">*</span></label>
+                <select name="job_type" class="form-control" required>
+                    <option value="">-- Chọn loại hình --</option>
+                    {% for type_choice in job_types %}
+                    <option value="{{ type_choice.0 }}" {% if job.job_type == type_choice.0 %}selected{% endif %}>{{ type_choice.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="location-section">
+            <div class="location-section-title">
+                <span><i class="fa-solid fa-location-dot"></i></span> Địa điểm làm việc
+            </div>
+            <div class="location-row">
+                <div class="form-group">
+                    <label class="form-label">Tỉnh/Thành phố <span class="required">*</span></label>
+                    <select name="province" id="provinceSelect" class="form-control" required>
+                        <option value="">-- Chọn Tỉnh/TP --</option>
+                        {% for province in provinces %}
+                        <option value="{{ province.code }}" {% if job.province and job.province.code == province.code %}selected{% endif %}>{{ province.name_with_type }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Quận/Huyện</label>
+                    <select name="district" id="districtSelect" class="form-control" {% if not districts %}disabled{% endif %}>
+                        <option value="">-- Chọn Quận/Huyện --</option>
+                        {% for district in districts %}
+                        <option value="{{ district.code }}" {% if job.district and job.district.code == district.code %}selected{% endif %}>{{ district.name_with_type }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Xã/Phường</label>
+                    <select name="ward" id="wardSelect" class="form-control" {% if not wards %}disabled{% endif %}>
+                        <option value="">-- Chọn Xã/Phường --</option>
+                        {% for ward in wards %}
+                        <option value="{{ ward.code }}" {% if job.ward and job.ward.code == ward.code %}selected{% endif %}>{{ ward.name_with_type }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 15px;">
+                <label class="form-label">Địa chỉ chi tiết (Số nhà, tên đường...)</label>
+                <input type="text" name="address_detail" class="form-control" value="{{ job.address_detail|default:'' }}" placeholder="Ví dụ: Số 123, Đường ABC, Tòa nhà XYZ">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Kinh nghiệm yêu cầu</label>
+                <select name="experience_level" class="form-control">
+                    <option value="">-- Chọn kinh nghiệm --</option>
+                    {% for exp in experience_levels %}
+                    <option value="{{ exp.name }}" {% if job.experience_level == exp.name %}selected{% endif %}>{{ exp.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Lương tối thiểu (triệu/tháng)</label>
+                <input type="number" name="salary_min" class="form-control" value="{{ job.salary_min|default:'' }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Lương tối đa (triệu/tháng)</label>
+                <input type="number" name="salary_max" class="form-control" value="{{ job.salary_max|default:'' }}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Mô tả công việc <span class="required">*</span></label>
+            <textarea name="description" class="form-control" rows="5" required>{{ job.description }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Trách nhiệm chính</label>
+            <textarea name="responsibilities" class="form-control" rows="4">{{ job.responsibilities|default:'' }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Yêu cầu & Trình độ</label>
+            <textarea name="requirements_text" class="form-control" rows="4">{{ job.requirements|default:'' }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Trạng thái</label>
+            <select name="is_active" class="form-control">
+                <option value="1" {% if job.is_active %}selected{% endif %}>Đang tuyển</option>
+                <option value="0" {% if not job.is_active %}selected{% endif %}>Ngừng tuyển</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="panel-header" style="border-top: 1px solid var(--border-color);">
+        <h3 class="panel-title">Kỹ năng yêu cầu</h3>
+    </div>
+    <div class="panel-body">
+        {% regroup skills by category as skill_groups %}
+        {% for group in skill_groups %}
+        <div class="skill-category">
+            <div class="skill-category-title">{{ group.grouper|default:"Khác" }}</div>
+            <div class="skill-checkbox-group">
+                {% for skill in group.list %}
+                <label class="checkbox-item">
+                    <input type="checkbox" name="skills" value="{{ skill.id }}" {% if skill.id in selected_skills %}checked{% endif %}>
+                    <span>{{ skill.name }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="panel-header" style="border-top: 1px solid var(--border-color);">
+        <h3 class="panel-title">Yêu cầu công việc</h3>
+    </div>
+    <div class="panel-body">
+        {% regroup requirements by get_requirement_type_display as req_groups %}
+        {% for group in req_groups %}
+        <div class="requirement-section">
+            <div class="requirement-section-title">{{ group.grouper }}</div>
+            <div class="requirement-options">
+                {% for req in group.list %}
+                <label class="requirement-option">
+                    <input type="checkbox" name="job_requirements" value="{{ req.id }}" {% if req.id in selected_requirements %}checked{% endif %}>
+                    <span>{{ req.name }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="panel-footer" style="display: flex; justify-content: flex-end; gap: 12px;">
+        <a href="{% url 'dashboard:manage_jobs' %}" class="btn btn-secondary">Hủy bỏ</a>
+        <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi
+        </button>
+    </div>
+</form>
+
+<script>
+const provinceSelect = document.getElementById('provinceSelect');
+const districtSelect = document.getElementById('districtSelect');
+const wardSelect = document.getElementById('wardSelect');
+provinceSelect.addEventListener('change', function() {
+    const provinceCode = this.value;
+    
+    districtSelect.innerHTML = '<option value="">-- Đang tải... --</option>';
+    districtSelect.disabled = true;
+    wardSelect.innerHTML = '<option value="">-- Chọn Xã/Phường --</option>';
+    wardSelect.disabled = true;
+    
+    if (!provinceCode) {
+        districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+        return;
+    }
+    
+    fetch(`/jobs/api/districts/${provinceCode}/`)
+        .then(response => response.json())
+        .then(data => {
+            districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+            data.districts.forEach(d => {
+                const option = document.createElement('option');
+                option.value = d.code;
+                option.textContent = d.name_with_type;
+                districtSelect.appendChild(option);
+            });
+            districtSelect.disabled = false;
+        })
+        .catch(error => {
+            console.error('Error loading districts:', error);
+            districtSelect.innerHTML = '<option value="">-- Lỗi tải dữ liệu --</option>';
+        });
+});
+
+districtSelect.addEventListener('change', function() {
+    const districtCode = this.value;
+    
+    wardSelect.innerHTML = '<option value="">-- Đang tải... --</option>';
+    wardSelect.disabled = true;
+    
+    if (!districtCode) {
+        wardSelect.innerHTML = '<option value="">-- Chọn Xã/Phường --</option>';
+        return;
+    }
+    
+    fetch(`/jobs/api/wards/${districtCode}/`)
+        .then(response => response.json())
+        .then(data => {
+            wardSelect.innerHTML = '<option value="">-- Chọn Xã/Phường --</option>';
+            data.wards.forEach(w => {
+                const option = document.createElement('option');
+                option.value = w.code;
+                option.textContent = w.name_with_type;
+                wardSelect.appendChild(option);
+            });
+            wardSelect.disabled = false;
+        })
+        .catch(error => {
+            console.error('Error loading wards:', error);
+            wardSelect.innerHTML = '<option value="">-- Lỗi tải dữ liệu --</option>';
+        });
+});
+</script>
+{% endblock %}

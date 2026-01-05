@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Applications - JobPortal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="applications-header">
+    <div class="container">
+        <h1>Việc đã ứng tuyển</h1>
+        <p>Theo dõi việc làm đã ứng tuyển</p>
+    </div>
+</div>
+
+<div class="applications-container">
+    {% if applications %}
+        {% for app in applications %}
+        <div class="application-card">
+            <div class="app-header">
+                <div>
+                    <div class="app-title">{{ app.job.title }}</div>
+                    <div class="app-company">{{ app.job.company.name }} • {{ app.job.location }}</div>
+                </div>
+                <span class="app-status status-{{ app.status|lower }}">{{ app.status }}</span>
+            </div>
+
+            <div class="app-meta">
+                <span>Ứng tuyển lúc: {{ app.created_at|date:"M d, Y" }}</span>
+                <span>Loại công việc: {{ app.job.job_type }}</span>
+            </div>
+
+            {% if app.cover_letter %}
+            <div class="app-letter">
+                <strong>Giới thiệu bản thân:</strong><br>
+                {{ app.cover_letter }}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="no-applications">
+        <p style="font-size: 16px; margin-bottom: 20px;">Bạn chưa ứng tuyển công việc nào</p>
+        <a href="{% url 'jobs:list' %}" class="btn btn-primary">Xem công việc →</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

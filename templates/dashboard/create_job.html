@@ -1,0 +1,297 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Đăng tin tuyển dụng - Bảng điều khiển{% endblock %}
+{% block page_title %}Đăng tin tuyển dụng{% endblock %}
+
+{% block content %}
+<form method="POST" class="panel">
+    {% csrf_token %}
+    <div class="panel-header">
+        <h3 class="panel-title">Thông tin việc làm</h3>
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label class="form-label">Tiêu đề công việc <span class="required">*</span></label>
+            <input type="text" name="title" class="form-control" placeholder="Ví dụ: Lập trình viên Python Senior" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Danh mục công việc <span class="required">*</span></label>
+                <select name="category" id="categorySelect" class="form-control" required>
+                    <option value="">-- Chọn danh mục --</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}" data-name="{{ category.name }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Loại hình công việc <span class="required">*</span></label>
+                <select name="job_type" class="form-control" required>
+                    <option value="">-- Chọn loại hình --</option>
+                    {% for type_choice in job_types %}
+                    <option value="{{ type_choice.0 }}">{{ type_choice.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="location-section">
+            <div class="location-section-title">
+                <span><i class="fa-solid fa-location-dot"></i></span> Địa điểm làm việc
+            </div>
+            <div class="location-row">
+                <div class="form-group">
+                    <label class="form-label">Tỉnh/Thành phố <span class="required">*</span></label>
+                    <select name="province" id="provinceSelect" class="form-control" required>
+                        <option value="">-- Chọn Tỉnh/TP --</option>
+                        {% for province in provinces %}
+                        <option value="{{ province.code }}">{{ province.name_with_type }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Quận/Huyện</label>
+                    <select name="district" id="districtSelect" class="form-control" disabled>
+                        <option value="">-- Chọn Quận/Huyện --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Xã/Phường</label>
+                    <select name="ward" id="wardSelect" class="form-control" disabled>
+                        <option value="">-- Chọn Xã/Phường --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 15px;">
+                <label class="form-label">Địa chỉ chi tiết (Số nhà, tên đường...)</label>
+                <input type="text" name="address_detail" class="form-control" placeholder="Ví dụ: Số 123, Đường ABC, Tòa nhà XYZ">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Kinh nghiệm yêu cầu</label>
+                <select name="experience_level" class="form-control">
+                    <option value="">-- Chọn kinh nghiệm --</option>
+                    {% for exp in experience_levels %}
+                    <option value="{{ exp.name }}">{{ exp.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Lương tối thiểu (triệu/tháng)</label>
+                <input type="number" name="salary_min" class="form-control" placeholder="Ví dụ: 15">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Lương tối đa (triệu/tháng)</label>
+                <input type="number" name="salary_max" class="form-control" placeholder="Ví dụ: 25">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Mô tả công việc <span class="required">*</span></label>
+            <textarea name="description" class="form-control" rows="5"
+                placeholder="Mô tả về vị trí, công việc hàng ngày, và những gì bạn tìm kiếm..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Trách nhiệm chính</label>
+            <textarea name="responsibilities" class="form-control" rows="4"
+                placeholder="Liệt kê các trách nhiệm chính, mỗi dòng một mục..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Yêu cầu & Trình độ</label>
+            <textarea name="requirements_text" class="form-control" rows="4"
+                placeholder="Liệt kê các yêu cầu và trình độ cần thiết, mỗi dòng một mục..."></textarea>
+        </div>
+    </div>
+
+    <div class="panel-header" style="border-top: 1px solid var(--border-color);">
+        <h3 class="panel-title">Kỹ năng yêu cầu</h3>
+    </div>
+    <div class="panel-body">
+        <p class="form-help" style="margin-bottom: 16px;">Chọn danh mục ở trên để hiển thị các kỹ năng liên quan:</p>
+        
+        <div id="skillsContainer">
+            <div class="skill-category" id="noSkillsMessage" style="text-align: center; padding: 20px; color: var(--text-light);">
+                <p><i class="fa-solid fa-box"></i> Vui lòng chọn <strong>Danh mục công việc</strong> trước để xem các kỹ năng liên quan.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-header" style="border-top: 1px solid var(--border-color);">
+        <h3 class="panel-title">Yêu cầu công việc</h3>
+    </div>
+    <div class="panel-body">
+        <p class="form-help" style="margin-bottom: 16px;">Chọn các yêu cầu cho vị trí này:</p>
+
+        {% regroup requirements by get_requirement_type_display as req_groups %}
+        {% for group in req_groups %}
+        <div class="requirement-section">
+            <div class="requirement-section-title">{{ group.grouper }}</div>
+            <div class="requirement-options">
+                {% for req in group.list %}
+                <label class="requirement-option">
+                    <input type="checkbox" name="job_requirements" value="{{ req.id }}">
+                    <span>{{ req.name }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="panel-footer" style="display: flex; justify-content: flex-end; gap: 12px;">
+        <a href="{% url 'dashboard:manage_jobs' %}" class="btn btn-secondary">Hủy bỏ</a>
+        <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fa-solid fa-paper-plane"></i> Đăng tin
+        </button>
+    </div>
+</form>
+
+<script>
+const provinceSelect = document.getElementById('provinceSelect');
+const districtSelect = document.getElementById('districtSelect');
+const wardSelect = document.getElementById('wardSelect');
+provinceSelect.addEventListener('change', function() {
+    const provinceCode = this.value;
+    
+    districtSelect.innerHTML = '<option value="">-- Đang tải... --</option>';
+    districtSelect.disabled = true;
+    wardSelect.innerHTML = '<option value="">-- Chọn Xã/Phường --</option>';
+    wardSelect.disabled = true;
+    
+    if (!provinceCode) {
+        districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+        return;
+    }
+    
+    fetch(`/jobs/api/districts/${provinceCode}/`)
+        .then(response => response.json())
+        .then(data => {
+            districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+            data.districts.forEach(d => {
+                const option = document.createElement('option');
+                option.value = d.code;
+                option.textContent = d.name_with_type;
+                districtSelect.appendChild(option);
+            });
+            districtSelect.disabled = false;
+        })
+        .catch(error => {
+            console.error('Error loading districts:', error);
+            districtSelect.innerHTML = '<option value="">-- Lỗi tải dữ liệu --</option>';
+        });
+});
+
+districtSelect.addEventListener('change', function() {
+    const districtCode = this.value;
+    
+    wardSelect.innerHTML = '<option value="">-- Đang tải... --</option>';
+    wardSelect.disabled = true;
+    
+    if (!districtCode) {
+        wardSelect.innerHTML = '<option value="">-- Chọn Xã/Phường --</option>';
+        return;
+    }
+    
+    fetch(`/jobs/api/wards/${districtCode}/`)
+        .then(response => response.json())
+        .then(data => {
+            wardSelect.innerHTML = '<option value="">-- Chọn Xã/Phường --</option>';
+            data.wards.forEach(w => {
+                const option = document.createElement('option');
+                option.value = w.code;
+                option.textContent = w.name_with_type;
+                wardSelect.appendChild(option);
+            });
+            wardSelect.disabled = false;
+        })
+        .catch(error => {
+            console.error('Error loading wards:', error);
+            wardSelect.innerHTML = '<option value="">-- Lỗi tải dữ liệu --</option>';
+        });
+});
+
+const categorySelect = document.getElementById('categorySelect');
+const skillsContainer = document.getElementById('skillsContainer');
+
+categorySelect.addEventListener('change', function() {
+    const categoryId = this.value;
+    const categoryName = this.options[this.selectedIndex].dataset.name || '';
+    
+    if (!categoryId) {
+        skillsContainer.innerHTML = `
+            <div class="skill-category" id="noSkillsMessage" style="text-align: center; padding: 20px; color: var(--text-light);">
+                <p><i class="fa-solid fa-box"></i> Vui lòng chọn <strong>Danh mục công việc</strong> trước để xem các kỹ năng liên quan.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    skillsContainer.innerHTML = `
+        <div style="text-align: center; padding: 20px; color: var(--text-light);">
+            <p><i class="fa-solid fa-spinner fa-spin"></i> Đang tải kỹ năng...</p>
+        </div>
+    `;
+    
+    fetch(`/jobs/api/skills/${categoryId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.skills && data.skills.length > 0) {
+                const skillsByCategory = {};
+                data.skills.forEach(skill => {
+                    const cat = skill.category || 'Khác';
+                    if (!skillsByCategory[cat]) {
+                        skillsByCategory[cat] = [];
+                    }
+                    skillsByCategory[cat].push(skill);
+                });
+                
+                let html = '';
+                for (const [catName, skills] of Object.entries(skillsByCategory)) {
+                    html += `
+                        <div class="skill-category">
+                            <div class="skill-category-title">${catName}</div>
+                            <div class="skill-checkbox-group">
+                    `;
+                    skills.forEach(skill => {
+                        html += `
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="skills" value="${skill.id}">
+                                <span>${skill.name}</span>
+                            </label>
+                        `;
+                    });
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
+                skillsContainer.innerHTML = html;
+            } else {
+                skillsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: var(--text-light);">
+                        <p><i class="fa-solid fa-triangle-exclamation"></i> Không tìm thấy kỹ năng cho danh mục <strong>${categoryName}</strong>.</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading skills:', error);
+            skillsContainer.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: #ef4444;">
+                    <p><i class="fa-solid fa-circle-xmark"></i> Lỗi khi tải kỹ năng. Vui lòng thử lại.</p>
+                </div>
+            `;
+        });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Saved Jobs - JobPortal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="saved-jobs-header">
+    <div class="container">
+        <h1>Công việc đã lưu</h1>
+        <p>{{ saved_jobs_count }} công việc đã lưu</p>
+    </div>
+</div>
+
+<div class="saved-jobs-container">
+    {% if saved_jobs %}
+        {% for saved_job in saved_jobs %}
+        <div class="job-card">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">{{ saved_job.job.title }}</div>
+                    <div class="job-company">{{ saved_job.job.company.name }}</div>
+                </div>
+                <div class="job-salary">
+                    {% if saved_job.job.salary_min and saved_job.job.salary_max %}
+                        ${{ saved_job.job.salary_min }}k - ${{ saved_job.job.salary_max }}k
+                    {% else %}
+                        Thương lượng
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="job-meta">
+                <div class="job-meta-item">Vị trí: {{ saved_job.job.location_short }}</div>
+                <div class="job-meta-item">Loại công việc: {{ saved_job.job.job_type }}</div>
+                <div class="job-meta-item">Đăng lúc {{ saved_job.job.created_at|timesince }} ago</div>
+            </div>
+
+            <div class="job-description">
+                {{ saved_job.job.description|truncatewords:30 }}
+            </div>
+
+            <div class="job-footer">
+                <div class="saved-date">Lưu vào {{ saved_job.created_at|date:"M d, Y" }}</div>
+                <div class="job-actions">
+                    <a href="{% url 'jobs:detail' saved_job.job.id %}" class="btn-apply">Xem chi tiết</a>
+                    <a href="{% url 'jobs:save' saved_job.job.id %}" class="btn-remove" onclick="return confirm('Bạn chắc chắn muốn xóa chứ?');">Xóa khỏi danh sách lưu</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="no-saved">
+        <p>Không có công việc nào được lưu</p>
+        <a href="{% url 'jobs:list' %}" class="btn btn-primary">Xem công việc →</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

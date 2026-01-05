@@ -1,0 +1,346 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}JobFast - Trang Chủ{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <h1><span class="highlight">Tìm kiếm việc nhanh 24h</span>, việc làm mới nhất trên toàn quốc.</h1>
+        <p>Tiếp cận tin tuyển dụng việc làm mỗi ngày từ hàng nghìn doanh nghiệp uy tín tại Việt Nam</p>
+        
+        <div class="search-section">
+            <form class="search-box" method="GET" action="{% url 'jobs:list' %}">
+                <div class="search-input-group">
+                    <input type="text" name="q" placeholder="Lập trình viên, Designer, Marketing...">
+                </div>
+
+                <div class="location-dropdown-wrapper">                    
+                    <button type="button" class="location-dropdown-toggle" id="locationToggle">
+                        <span class="location-text">Chọn tỉnh/thành phố</span>
+                        <span>▼</span>
+                    </button>
+
+                    <div class="location-dropdown-menu" id="locationDropdown">
+                        <div class="location-search">
+                            <input type="text" id="citySearch" placeholder="Nhập tỉnh/thành phố">
+                        </div>
+                        <div class="location-options" id="locationOptions">
+                            {% for province in provinces %}
+                            <div class="location-option">
+                                <label>
+                                    <input type="checkbox" name="provinces" value="{{ province.code }}" class="province-checkbox">
+                                    <span>{{ province.name_with_type }}</span>
+                                </label>
+                            </div>
+                            {% empty %}
+                            <div style="padding: 10px; color: var(--text-light); text-align: center;">Không có dữ liệu</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="selected-cities" id="selectedCitiesText"></div>
+                </div>
+
+                <button type="submit" class="btn-search">Tìm kiếm</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Matching Jobs Section -->
+<section class="featured-jobs matching-jobs-section">
+    <div class="section-header">
+        <h2 class="section-title">Việc làm tốt nhất <p style="font-size: 14px; font-weight: 500;">Được đề xuất từ hệ thống NLP</p></h2>
+        {% if has_skill_profile %}
+        <a href="{% url 'accounts:skill_profile' %}" class="view-all-link">Cập nhật kỹ năng →</a>
+        {% endif %}
+    </div>
+    
+    <div class="container">
+        {% if user.is_authenticated %}
+            {% if has_skill_profile %}
+                {% if matching_jobs %}
+                <div style="padding: 10px;"></div>
+                <div class="jobs-grid">
+                    {% for item in matching_jobs %}
+                    <div class="job-card" onclick="window.location='{% url 'jobs:detail' item.job.id %}'">
+                        <div class="matching-score">
+                            <span class="score-badge">{{ item.score }}% phù hợp</span>
+                        </div>
+                        <div class="job-card-header">
+                            {% if item.job.company.logo %}
+                            <div class="company-logo">
+                                <img src="{{ item.job.company.logo.url }}" alt="{{ item.job.company.name }}">
+                            </div>
+                            {% else %}
+                            <div class="company-logo-placeholder">
+                                {{ item.job.company.name|slice:":1"|upper }}
+                            </div>
+                            {% endif %}
+                            <div class="job-card-info">
+                                <div class="job-company">{{ item.job.company.name }}</div>
+                                <div class="job-title">{{ item.job.title }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="job-meta">
+                            <div class="job-meta-item"><i class="fa-solid fa-location-dot"></i> {{ item.job.location_short }}</div>
+                            <div class="job-meta-item"><i class="fa-regular fa-clock"></i> {{ item.job.job_type }}</div>
+                        </div>
+                        
+                        <div class="job-salary">
+                            {% if item.job.salary_min and item.job.salary_max %}
+                                {{ item.job.salary_min }}tr - {{ item.job.salary_max }}tr VNĐ
+                            {% elif item.job.salary_min %}
+                                Từ {{ item.job.salary_min }}tr VNĐ
+                            {% else %}
+                                Thương lượng
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-matching-jobs">
+                    <p>Chưa tìm thấy việc làm phù hợp với kỹ năng của bạn.</p>
+                    <a href="{% url 'jobs:list' %}" class="btn btn-primary">Khám phá tất cả việc làm</a>
+                </div>
+                {% endif %}
+            {% else %}
+            <div class="skill-profile-prompt">
+                <h3>Thiết lập hồ sơ kỹ năng</h3>
+                <p>Hãy cập nhật kỹ năng và lĩnh vực quan tâm để chúng tôi gợi ý những việc làm phù hợp nhất với bạn!</p>
+                <a href="{% url 'accounts:skill_profile' %}" class="btn btn-primary">Cập nhật ngay</a>
+            </div>
+            {% endif %}
+        {% else %}
+        <div class="skill-profile-prompt">
+            <h3>Đăng nhập để xem việc làm phù hợp</h3>
+            <p>Tạo tài khoản và thiết lập hồ sơ kỹ năng để nhận gợi ý việc làm được cá nhân hóa cho bạn!</p>
+            <div class="prompt-buttons">
+                <a href="{% url 'accounts:register' %}" class="btn btn-primary">Đăng ký miễn phí</a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-secondary">Đăng nhập</a>
+            </div>
+        </div>
+        {% endif %}
+        <div style="padding: 10px;"></div>
+    </div>
+</section>
+
+<!-- Latest Jobs Section -->
+<section class="featured-jobs">
+    <div class="section-header">
+        <img src="/media/section/section-1.png" alt="Plus" style="width: 100%">
+    </div>
+    
+    <div class="container">
+        <div class="category-filter-wrapper">
+            <button class="category-filter-scroll-btn scroll-left" id="scrollLeft">‹</button>
+            <div class="category-filter" id="categoryFilter">
+                <button class="category-tab active" data-category="all">Tất cả</button>
+                {% for category in categories %}
+                <button class="category-tab" data-category="{{ category.id }}">{{ category.name }}</button>
+                {% endfor %}
+            </div>
+            <button class="category-filter-scroll-btn scroll-right" id="scrollRight">›</button>
+        </div>
+        <div class="jobs-grid" id="jobsGrid">
+            {% for job in latest_jobs %}
+            <div class="job-card" data-category="{{ job.category.id|default:'none' }}" onclick="window.location='{% url 'jobs:detail' job.id %}'">
+                <div class="job-card-header">
+                    {% if job.company.logo %}
+                    <div class="company-logo">
+                        <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}">
+                    </div>
+                    {% else %}
+                    <div class="company-logo-placeholder">
+                        {{ job.company.name|slice:":1"|upper }}
+                    </div>
+                    {% endif %}
+                    <div class="job-card-info">
+                        <div class="job-company">{{ job.company.name }}</div>
+                        <div class="job-title">{{ job.title }}</div>
+                    </div>
+                </div>
+                
+                <div class="job-meta">
+                    <div class="job-meta-item"><i class="fa-solid fa-location-dot"></i> {{ job.location_short }}</div>
+                    <div class="job-meta-item"><i class="fa-regular fa-clock"></i> {{ job.job_type }}</div>
+                </div>
+                
+                <div class="job-salary">
+                    {% if job.salary_min and job.salary_max %}
+                        {{ job.salary_min }}tr - {{ job.salary_max }}tr VNĐ
+                    {% elif job.salary_min %}
+                        Từ {{ job.salary_min }}tr VNĐ
+                    {% else %}
+                        Thương lượng
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-muted" style="grid-column: 1 / -1;">Chưa có công việc nào.</p>
+            {% endfor %}
+        </div>
+
+        <div class="view-all-btn">
+            <a href="{% url 'jobs:list' %}" class="btn btn-primary">Xem tất cả việc làm →</a>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="browser-container">
+    <div class="cta-section">
+        <h2>Hãy để chúng tôi giúp bạn có một trải nghiệm hạnh phúc<br>trên hành trình sự nghiệp của bạn</h2>
+        <p style="margin-bottom: 30px; font-size: 16px;">Tham gia cùng hàng nghìn ứng viên đang sử dụng JobFast</p>
+        
+        <div class="cta-buttons">
+            {% if user.is_authenticated %}
+                <a href="{% url 'jobs:list' %}" class="btn" style="background-color: var(--secondary-color); color: var(--text-dark); font-weight: bold;">Xem tin tuyển dụng mới</a>
+                <a href="{% url 'dashboard:create_job' %}" class="btn" style="background-color: orange; color: var(--text-dark); font-weight: bold;">Bạn là nhà tuyển dụng? Đăng tin ngay</a>
+            {% else %}
+                <a href="{% url 'accounts:register' %}" class="btn" style="background-color: var(--secondary-color); color: var(--text-dark); font-weight: bold;">Đăng ký ngay</a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline" style="border-color: var(--white); color: var(--white);">Đăng nhập</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const allProvinces = {
+        {% for province in provinces %}
+        '{{ province.code }}': '{{ province.name }}',
+        {% endfor %}
+    };
+
+    const locationToggle = document.getElementById('locationToggle');
+    const locationDropdown = document.getElementById('locationDropdown');
+    const citySearch = document.getElementById('citySearch');
+    const provinceCheckboxes = document.querySelectorAll('.province-checkbox');
+
+    if (locationToggle) {
+        locationToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            locationDropdown.classList.toggle('active');
+            if (locationDropdown.classList.contains('active') && citySearch) {
+                citySearch.focus();
+            }
+        });
+    }
+
+    if (citySearch) {
+        citySearch.addEventListener('keyup', function() {
+            const searchInput = this.value.toLowerCase();
+            const options = document.querySelectorAll('.location-option');
+            
+            options.forEach(option => {
+                const label = option.querySelector('label span');
+                const cityName = label ? label.textContent.toLowerCase() : '';
+                
+                if (cityName.includes(searchInput)) {
+                    option.style.display = 'block';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    function updateSelectedProvinces() {
+        const checkboxes = document.querySelectorAll('input[name="provinces"]:checked');
+        const selectedProvinces = Array.from(checkboxes).map(cb => {
+            return allProvinces[cb.value] || cb.value;
+        }).join(', ');
+        
+        const selectedText = document.querySelector('.location-text');
+        const selectedProvincesText = document.getElementById('selectedCitiesText');
+        
+        if (selectedProvinces && checkboxes.length > 0) {
+            selectedText.textContent = `${checkboxes.length} Tỉnh/TP`;
+            selectedProvincesText.textContent = selectedProvinces;
+        } else {
+            selectedText.textContent = 'Chọn tỉnh/thành phố';
+            selectedProvincesText.textContent = '';
+        }
+    }
+
+    provinceCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectedProvinces);
+    });
+
+    document.addEventListener('click', function(event) {
+        const wrapper = document.querySelector('.location-dropdown-wrapper');
+        if (wrapper && !wrapper.contains(event.target)) {
+            locationDropdown.classList.remove('active');
+        }
+    });
+
+    if (locationDropdown) {
+        locationDropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+
+    // Chỉ lấy job-card trong #jobsGrid, không lấy job-card trong matching-jobs-section
+    const categoryTabs = document.querySelectorAll('.category-tab');
+    const jobCards = document.querySelectorAll('#jobsGrid .job-card');
+
+    categoryTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            categoryTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            const selectedCategory = this.dataset.category;
+            
+            jobCards.forEach(card => {
+                if (selectedCategory === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    const cardCategory = card.dataset.category;
+                    if (cardCategory === selectedCategory) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        });
+    });
+
+    const scrollLeftBtn = document.getElementById('scrollLeft');
+    const scrollRightBtn = document.getElementById('scrollRight');
+    const categoryFilter = document.getElementById('categoryFilter');
+
+    if (scrollLeftBtn && scrollRightBtn && categoryFilter) {
+        const scrollAmount = 200;
+
+        function updateScrollButtons() {
+            const { scrollLeft, scrollWidth, clientWidth } = categoryFilter;
+            scrollLeftBtn.classList.toggle('hidden', scrollLeft <= 0);
+            scrollRightBtn.classList.toggle('hidden', scrollLeft >= scrollWidth - clientWidth - 5);
+        }
+
+        scrollLeftBtn.addEventListener('click', () => {
+            categoryFilter.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        });
+
+        scrollRightBtn.addEventListener('click', () => {
+            categoryFilter.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        });
+
+        categoryFilter.addEventListener('scroll', updateScrollButtons);
+        window.addEventListener('resize', updateScrollButtons);
+        
+        setTimeout(updateScrollButtons, 100);
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Thông tin công ty - Bảng điều khiển{% endblock %}
+{% block page_title %}Thông tin công ty{% endblock %}
+
+{% block content %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="panel">
+        <div class="panel-header">
+            <h3 class="panel-title">Thông tin công ty</h3>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="form-label">Logo công ty</label>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div
+                        style="width: 100px; height: 100px; border-radius: 12px; overflow: hidden; background-color: var(--bg-color); display: flex; align-items: center; justify-content: center;">
+                        {% if company.logo %}
+                        <img src="{{ company.logo.url }}" alt="{{ company.name }}"
+                            style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                        <span style="font-size: 48px;"><i class="fa-solid fa-building"></i></span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <input type="file" name="logo" id="logo" accept="image/*" style="display: none;">
+                        <label for="logo" class="btn btn-secondary" style="cursor: pointer;">
+                            Đổi logo
+                        </label>
+                        <p class="form-help">Khuyến nghị: 200x200px, định dạng PNG hoặc JPG</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Tên công ty <span class="required">*</span></label>
+                <input type="text" name="name" class="form-control" value="{{ company.name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Website</label>
+                <input type="url" name="website" class="form-control" value="{{ company.website|default:'' }}"
+                    placeholder="https://example.com">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Giới thiệu công ty</label>
+                <textarea name="description" class="form-control" rows="6"
+                    placeholder="Giới thiệu về công ty, văn hóa làm việc, và những điều khiến công ty trở thành nơi làm việc tuyệt vời...">{{ company.description|default:'' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Quy mô công ty</label>
+                <input type="text" name="company_size" class="form-control" 
+                    value="{{ company.company_size|default:'' }}"
+                    placeholder="Ví dụ: 25-99 nhân viên, 100-499 nhân viên...">
+                <p class="form-help">Nhập số lượng nhân viên của công ty (ví dụ: 10-25 nhân viên)</p>
+            </div>
+        </div>
+
+        <div class="panel-footer" style="display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn btn-primary btn-lg">
+                Lưu thay đổi
+            </button>
+        </div>
+    </div>
+</form>
+
+<div class="panel">
+    <div class="panel-header">
+        <h3 class="panel-title">Thông tin tài khoản</h3>
+    </div>
+    <div class="panel-body">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Tên đăng nhập</label>
+                <input type="text" class="form-control" value="{{ user.username }}" disabled>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" value="{{ user.email }}" disabled>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Loại tài khoản</label>
+                <input type="text" class="form-control" value="Nhà tuyển dụng" disabled>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ngày tham gia</label>
+                <input type="text" class="form-control" value="{{ user.date_joined|date:'d/m/Y' }}" disabled>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

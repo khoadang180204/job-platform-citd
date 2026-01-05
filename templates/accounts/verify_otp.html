@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Xác thực OTP - JobFAST{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-title">
+            <div class="icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+            <h2>Nhập mã OTP</h2>
+            <p>Chúng tôi đã gửi mã xác thực 6 số đến email<br><span class="email-highlight">{{ email }}</span></p>
+        </div>
+
+        <div class="warning-box">
+            <i class="fa-regular fa-clock"></i> Mã OTP có hiệu lực trong 10 phút. Vui lòng kiểm tra cả thư mục spam nếu không thấy email.
+        </div>
+
+        <form method="POST" class="auth-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="otp">Mã OTP</label>
+                <input 
+                    type="text" 
+                    id="otp" 
+                    name="otp" 
+                    class="otp-input"
+                    placeholder="000000"
+                    maxlength="6"
+                    pattern="[0-9]{6}"
+                    inputmode="numeric"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <button type="submit" class="btn-submit">Xác nhận</button>
+        </form>
+
+        <div class="resend-link">
+            Không nhận được mã? <a href="{% url 'accounts:forgot_password' %}">Gửi lại</a>
+        </div>
+
+        <div class="auth-footer">
+            <a href="{% url 'accounts:login' %}">← Quay lại đăng nhập</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('otp').addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+# Core Framework
+Django>=4.2
+
+# =====================================================
+# NLP PROCESSING
+# Sử dụng cho tính năng gợi ý việc làm phù hợp
+# =====================================================
+
+# TF-IDF Vectorization & Cosine Similarity
+# Thư viện machine learning phổ biến, dùng để tính độ tương đồng văn bản
+scikit-learn
+
+# Vietnamese NLP - Tokenization (Tách từ tiếng Việt)
+# Thư viện NLP cho tiếng Việt, hỗ trợ word segmentation
+underthesea
+
+# English NLP - Tokenization (Tách từ tiếng Anh)
+# Thư viện NLP đơn giản cho tiếng Anh
+textblob
+
+# =====================================================
+# IMAGE HANDLING
+# Xử lý upload ảnh (logo công ty, avatar)
+# =====================================================
+Pillow
+
+# =====================================================
+# UTILITIES
+# Các thư viện tiện ích khác
+# =====================================================
+python-dateutil

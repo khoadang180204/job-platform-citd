@@ -1,0 +1,93 @@
+{
+  "experience": [
+    "Chưa có kinh nghiệm",
+    "Dưới 1 năm",
+    "1-2 năm",
+    "3-4 năm",
+    "5-7 năm",
+    "Trên 7 năm"
+  ],
+  "education_level": [
+    "Không yêu cầu bằng cấp",
+    "Trung học phổ thông",
+    "Trung cấp",
+    "Cao đẳng",
+    "Đại học",
+    "Sau đại học"
+  ],
+  "language": [
+    "Không yêu cầu",
+    "Tiếng Anh",
+    "Tiếng Trung",
+    "Tiếng Nhật",
+    "Tiếng Hàn",
+    "Tiếng Pháp",
+    "Tiếng Đức",
+    "Khác"
+  ],
+  "employment_type": [
+    "Toàn thời gian",
+    "Bán thời gian",
+    "Thực tập",
+    "Thử việc",
+    "Freelance",
+    "Thời vụ"
+  ],
+  "work_mode": [
+    "Làm việc tại văn phòng",
+    "Làm việc từ xa (Remote)",
+    "Hybrid (Kết hợp)"
+  ],
+  "gender_requirement": [
+    "Không yêu cầu",
+    "Nam",
+    "Nữ"
+  ],
+  "age_requirement": [
+    "Không yêu cầu",
+    "Dưới 25 tuổi",
+    "25-30 tuổi",
+    "31-40 tuổi",
+    "Trên 40 tuổi"
+  ],
+  "skills": [
+    "Kỹ năng giao tiếp",
+    "Kỹ năng làm việc nhóm",
+    "Kỹ năng quản lý thời gian",
+    "Kỹ năng giải quyết vấn đề",
+    "Kỹ năng thuyết trình",
+    "Kỹ năng lãnh đạo"
+  ],
+  "technical_skills": [
+    "Tin học văn phòng",
+    "Lập trình",
+    "Thiết kế",
+    "Kế toán",
+    "Marketing",
+    "Bán hàng"
+  ],
+  "salary_range": [
+    "Thỏa thuận",
+    "Dưới 5 triệu",
+    "5-10 triệu",
+    "10-15 triệu",
+    "15-20 triệu",
+    "20-30 triệu",
+    "Trên 30 triệu"
+  ],
+  "benefits": [
+    "Bảo hiểm xã hội",
+    "Bảo hiểm y tế",
+    "Thưởng lễ tết",
+    "Lương tháng 13",
+    "Du lịch hàng năm",
+    "Đào tạo nâng cao",
+    "Làm việc linh hoạt"
+  ],
+  "probation_time": [
+    "Không thử việc",
+    "1 tháng",
+    "2 tháng",
+    "3 tháng"
+  ]
+}

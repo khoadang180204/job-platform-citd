@@ -1,0 +1,100 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Ứng viên cho {{ job.title }} - Bảng điều khiển{% endblock %}
+{% block page_title %}Ứng viên cho "{{ job.title }}"{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <a href="{% url 'dashboard:manage_jobs' %}" class="btn btn-secondary">
+        ← Quay lại danh sách
+    </a>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h3 class="panel-title">{{ applications.count }} ứng viên</h3>
+    </div>
+    <div class="panel-body" style="padding: 0;">
+        {% if applications %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Ứng viên</th>
+                    <th>Liên hệ</th>
+                    <th>Ngày ứng tuyển</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div
+                                style="width: 40px; height: 40px; border-radius: 50%; background-color: #f1f5f9; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                {% if app.photo %}
+                                <img src="{{ app.photo.url }}" alt=""
+                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                <span style="font-size: 18px;"><i class="fa-solid fa-user"></i></span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <strong>{{ app.full_name|default:app.user.get_full_name|default:app.user.username
+                                    }}</strong>
+                                {% if app.cv_file %}
+                                <div style="font-size: 12px;">
+                                    <a href="{{ app.cv_file.url }}" style="color: var(--primary-color);"
+                                        target="_blank"><i class="fa-solid fa-file-pdf"></i> Tải CV</a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-size: 13px;">
+                            <div><i class="fa-solid fa-envelope"></i> {{ app.email|default:app.user.email }}</div>
+                            <div><i class="fa-solid fa-phone"></i> {{ app.phone|default:"Chưa cung cấp" }}</div>
+                        </div>
+                    </td>
+                    <td>{{ app.created_at|date:"d/m/Y" }}</td>
+                    <td>
+                        <span class="badge badge-{{ app.status|lower }}">
+                            {% if app.status == 'Pending' %}Chờ xét duyệt
+                            {% elif app.status == 'Reviewed' %}Đã xem
+                            {% elif app.status == 'Accepted' %}Đã chấp nhận
+                            {% elif app.status == 'Rejected' %}Đã từ chối
+                            {% else %}{{ app.status }}{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 8px;">
+                            <a href="{% url 'dashboard:application_detail' app.id %}"
+                                class="btn btn-primary btn-sm">Xem</a>
+                            <form method="POST" action="{% url 'dashboard:update_application_status' app.id %}"
+                                style="display: inline;">
+                                {% csrf_token %}
+                                <select name="status" onchange="this.form.submit()"
+                                    style="padding: 6px 10px; border-radius: 4px; border: 1px solid #e2e8f0; font-size: 12px;">
+                                    <option value="Pending" {% if app.status == 'Pending' %}selected{% endif %}>Chờ xét duyệt</option>
+                                    <option value="Reviewed" {% if app.status == 'Reviewed' %}selected{% endif %}>Đã xem</option>
+                                    <option value="Accepted" {% if app.status == 'Accepted' %}selected{% endif %}>Đã chấp nhận</option>
+                                    <option value="Rejected" {% if app.status == 'Rejected' %}selected{% endif %}>Đã từ chối</option>
+                                </select>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-title">Chưa có ứng viên nào</div>
+            <div class="empty-state-text">Các đơn ứng tuyển cho vị trí này sẽ xuất hiện tại đây.</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
